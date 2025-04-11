@@ -3,15 +3,19 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"]
     }
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
+    "expo-env.d.ts",
+    "navigation/AppNav.jsx",
+    "context/AuthContext.jsx",
+    "components/Gobutton.jsx",
+    "components/animatedLogo.jsx",
+    "constants/routes.js",
+    "constants/colors.js"
   ]
 }
