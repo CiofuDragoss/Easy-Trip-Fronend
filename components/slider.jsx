@@ -1,28 +1,38 @@
-import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
-import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Text,View, StyleSheet, Dimensions } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  useDerivedValue,
+} from "react-native-reanimated";
+import {
+  Gesture,
+  GestureDetector,
+  GestureHandlerRootView,
+} from "react-native-gesture-handler";
+import { Text, View, StyleSheet, Dimensions } from "react-native";
 
-// Obține lățimea ecranului înainte de toate
-const { width } = Dimensions.get('window');
-const SLIDER_WIDTH = width/2; 
-const HANDLE_SIZE = 33;
+const { width } = Dimensions.get("window");
+const SLIDER_WIDTH = width / 2;
+const HANDLE_SIZE = 30;
 
-export default function Slider({labels,text}) {
-  const translateX = useSharedValue(-HANDLE_SIZE/2);
-  const startX= useSharedValue(0);
-  const panGesture = Gesture.Pan().onStart(() => {
-    
-      startX.value = translateX.value-HANDLE_SIZE/2;
+export default function Slider({ labels, text }) {
+  const translateX = useSharedValue(-HANDLE_SIZE / 2);
+  const startX = useSharedValue(0);
+
+  const sliderValue = useDerivedValue(() => {
+    return translateX / (SLIDER_WIDTH - HANDLE_SIZE / 2);
+  });
+  const panGesture = Gesture.Pan()
+    .onStart(() => {
+      startX.value = translateX.value - HANDLE_SIZE / 2;
     })
     .onUpdate((event) => {
-      
       translateX.value = Math.min(
-        Math.max(startX.value+event.translationX, -HANDLE_SIZE/2),
-        SLIDER_WIDTH - HANDLE_SIZE/2
+        Math.max(startX.value + event.translationX, -HANDLE_SIZE / 2),
+        SLIDER_WIDTH - HANDLE_SIZE / 2
       );
     })
     .onEnd(() => {
-      
       translateX.value = withSpring(translateX.value);
     });
 
@@ -30,97 +40,106 @@ export default function Slider({labels,text}) {
     transform: [{ translateX: translateX.value }],
   }));
   const colorStyle = useAnimatedStyle(() => ({
-    width: translateX.value + HANDLE_SIZE/ 2 , 
+    width: translateX.value + HANDLE_SIZE / 2,
   }));
 
   return (
     <View style={styles.main}>
       <View style={styles.container}>
-        <View style={styles.track} >
-        <Animated.View style={[styles.filledTrack, colorStyle]} />
+        <View style={styles.track}>
+          <Animated.View style={[styles.filledTrack, colorStyle]} />
         </View>
         <GestureDetector gesture={panGesture}>
-          <Animated.View style={[styles.handle, animatedStyle]} />
+          <View style={styles.gestureWrapper}>
+            <Animated.View
+              style={[styles.handle, animatedStyle]}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            />
+          </View>
         </GestureDetector>
-    
-      
-            
-            </View>
-            <View style={styles.labelsContainer}>
-              {labels.map((label, index) => (
-                <View key={index} style={styles.markers}>
-                  <View style={styles.bar}/>
-                  <Text style={styles.labelTxt}>{label}</Text>
-                  
-                </View>
-              ))}
-            </View>
       </View>
-    
+      <View style={styles.labelsContainer}>
+        {labels.map((label, index) => (
+          <View key={index} style={styles.markers}>
+            <View style={styles.bar} />
+            <Text style={styles.labelTxt}>{label}</Text>
+          </View>
+        ))}
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-    main:{
-      
-        alignItems:"center",
-        
-    },
-    softText:{
-      fontFamily:"Poppins-Bold",
-      fontSize:11,
-      color:"grey",
-    },
-    labelTxt: {
-        fontFamily: 'Poppins-Bold',
-        fontSize: 13,
-        color: 'black',
-        position:"absolute",
-        top:12,
-        textAlign:"center",
-        width: 60,
-        backgroundColor:"red",
-      },
-    markers:{
-        height: 20,
-        alignItems:"center",
-        position:"relative",
-        
-    },
-    labelsContainer: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        width: SLIDER_WIDTH-1,
-        marginTop: 3,
-      },
-    bar:{
-      borderRadius: 10,
-        height:11,
-        width:2,
-        backgroundColor:"black",
-    },
+  gestureWrapper: {
+    // suficient spațiu ca handle-ul să intre complet
+    position: "absolute",
+    top: -60,
+
+    height: 90,
+    width: SLIDER_WIDTH + 150,
+    left: -75,
+    justifyContent: "center",
+
+    // asigură-te că nu ai overflow: 'hidden' aici
+  },
+
+  main: {
+    alignItems: "center",
+    marginTop: 44,
+  },
+  softText: {
+    fontFamily: "Poppins-Bold",
+    fontSize: 11,
+    color: "grey",
+  },
+  labelTxt: {
+    fontFamily: "Poppins-Bold",
+    fontSize: 13,
+    color: "black",
+    position: "absolute",
+    top: 14,
+    textAlign: "center",
+    width: 100,
+    lineHeight: 16,
+  },
+  markers: {
+    alignItems: "center",
+    position: "relative",
+  },
+  labelsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: SLIDER_WIDTH - 1,
+    marginTop: 3,
+  },
+  bar: {
+    borderRadius: 10,
+    height: 11,
+    width: 2,
+    backgroundColor: "black",
+  },
   container: {
-    position: 'relative',
-    justifyContent: 'center',
+    position: "relative",
+    justifyContent: "center",
   },
   filledTrack: {
-    height: '30%',
-    backgroundColor: '#3498db',
+    height: "30%",
+    backgroundColor: "#3498db",
   },
   track: {
-    justifyContent: 'center',
+    justifyContent: "center",
     width: SLIDER_WIDTH,
     height: 5,
-    backgroundColor: '#ddd',
+    backgroundColor: "#ddd",
     borderRadius: 2,
   },
   handle: {
-    position: 'absolute',
+    position: "absolute",
+    left: 75,
     width: HANDLE_SIZE,
     height: HANDLE_SIZE,
     borderRadius: 20,
-    backgroundColor: '#3498db',
-    top: -(HANDLE_SIZE) 
+    backgroundColor: "#3498db",
   },
 });
-

@@ -87,12 +87,13 @@ export default function SwipeListValue({ data, onSelectItem }) {
 
 const styles = StyleSheet.create({
   inputContainer: {
-    height: 70,
     width: ITEM_WIDTH,
     alignItems: "center",
+    justifyContent: "center",
   },
   container: {
-    height: 100,
+    padding: 5,
+    height: 60,
   },
   text: {
     fontFamily: "Poppins-Bold",

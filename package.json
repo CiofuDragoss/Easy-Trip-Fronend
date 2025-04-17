@@ -51,7 +51,8 @@
     "react-native-swipe-list-view": "^3.2.9",
     "react-native-web": "~0.19.13",
     "react-native-webview": "13.12.5",
-    "snap": "^1.1.0"
+    "snap": "^1.1.0",
+    "@react-native-community/datetimepicker": "8.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

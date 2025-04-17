@@ -12,12 +12,13 @@ import {
   FontAwesome6,
   FontAwesome,
 } from "@expo/vector-icons";
+import BaseQuestions from "@/components/BaseQuestions";
 import { useLocation } from "@/context/LocationContext";
 import SwipeList from "@/components/swipeList";
 import SwipeListValue from "@/components/flatListValue";
 import AnimatedQuestion from "@/components/animatedQustion";
 import GoButton from "@/components/Gobutton";
-
+import BorderButton from "@/components/borderPressable";
 const default__latitude_delta_val = 4.7;
 export default function MainQuestions() {
   const { location } = useLocation();
@@ -37,8 +38,13 @@ export default function MainQuestions() {
       category: categories[selectedCategory],
       distance: distanta[selectedDistance],
     });
-
-    navigation.navigate("CategoryQuestions");
+    console.log("before navigation, selectedCategory index:", selectedCategory);
+    console.log(
+      "Category set for navigation:",
+      categories[selectedCategory].title
+    );
+    console.log("navigam laa: ", categories[selectedCategory].title);
+    navigation.navigate(categories[selectedCategory].title);
   };
   return (
     <View style={styles.mainContainer}>
@@ -58,17 +64,26 @@ export default function MainQuestions() {
       </Text>
 
       <SwipeListValue data={distanta} onSelectItem={setSelectedDistance} />
-      <GoButton text={"continua"} onSwipe={handleSwipe} />
+      <BaseQuestions />
+      <GoButton
+        key={selectedCategory}
+        text={"continua"}
+        onSwipe={handleSwipe}
+      />
       {error && <Text style={styles.text}>{error}</Text>}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  textQuestions: {
+    fontFamily: "Poppins-Bold",
+    fontSize: 15,
+    textAlign: "center",
+  },
   mainContainer: {
     flex: 1,
     alignItems: "center",
-    paddingVertical: 100,
   },
   text: {
     color: "red",
@@ -85,7 +100,6 @@ const distanta = (() => {
   const result = [];
   for (let i = 1; i <= 60; i++) {
     result.push({ key: i.toString(), value: `${i} km` });
-    console.log("hei", i);
   }
   return result;
 })();
