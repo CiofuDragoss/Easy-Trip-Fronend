@@ -1,66 +1,70 @@
 import routes from "@/constants/routes";
+import { useCallback, useContext } from "react";
+import { useNavigation } from "expo-router";
+import { AuthContext } from "@/context/AuthContext";
 
-//functie pentru url ul de baza al bakcendului
 const BASE_URL = routes.backend_base;
-const GET_IP = routes.get_ip;
-const GET_IP_LOCATION = routes.get_ip_loc;
-//functie pentru recomandari as_u_type de locatie
-export async function fetchPredictions(query, token) {
-  try {
-    const response = await fetch(
-      `${BASE_URL}/location_autocomplete?query=${query}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    if (!response.ok) {
-      throw new Error("Eroare de la API.");
-    }
-    const data = await response.json();
-    return data.predictions;
-  } catch (error) {
-    throw error;
-  }
+
+export async function refresh(token) {
+  const response = await fetch(`${BASE_URL}/auth/refresh`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response;
+}
+export async function fetchPredictions(token, query) {
+  const url = new URL(`${BASE_URL}/location_autocomplete`);
+  url.searchParams.set("input", query);
+
+  const response = await fetch(url.toString(), {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+  return response;
 }
 
 export async function getIpLoc(token) {
-  try {
-    const locationResponse = await fetch(`${BASE_URL}/ip_location`, {
+  const { ip } = await fetch("https://api.ipify.org?format=json").then((r) =>
+    r.json()
+  );
+  const locationResponse = await fetch(
+    `${BASE_URL}/ip_location?publicIp=${ip}`,
+    {
       headers: {
         Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
-    });
-    if (!locationResponse.ok) {
-      const error = await locationResponse.json();
-      throw new Error(error.detail);
     }
-    const locationData = await locationResponse.json();
-    return locationData;
-  } catch (error) {
-    throw error;
-  }
+  );
+  return locationResponse;
 }
 
-export async function getPlaceGeoLoc(token, placeId) {
-  try {
-    const response = await fetch(
-      `${BASE_URL}/get_placeid_loc?query=${placeId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    if (!response.ok) {
-      throw new Error("Eroare de la API.");
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    throw error;
-  }
+export async function sendShopping(token, data) {
+  const response = await fetch(`${BASE_URL}/shopping_questions`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  print("avem body", JSON.stringify(data));
+  return response;
+}
+export async function getPlaceGeoLoc(token, placeIdd) {
+  const response = await fetch(`${BASE_URL}/get_placeid_loc`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ placeId: placeIdd }),
+  });
+  return response;
 }
 
 export function debounce(func, delay) {

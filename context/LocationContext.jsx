@@ -6,6 +6,7 @@ import {
   useEffect,
   useRef,
 } from "react";
+import { useApiWithRefresh } from "@/hooks/refreshHook";
 import {
   debounce,
   fetchPredictions,
@@ -13,12 +14,14 @@ import {
   getPlaceGeoLoc,
 } from "@/utils/api";
 import * as Location from "expo-location";
-import { AuthContext } from "./AuthContext";
+
+import { AuthContext } from "@/context/AuthContext";
 
 const LocationContext = createContext();
 
 export default function LocationProvider({ children }) {
   const { userToken: token } = useContext(AuthContext);
+  const { startWRefresh } = useApiWithRefresh();
   const [location, setLocation] = useState(null);
   const [query, SetQuery] = useState("");
   const [predictions, setPredictions] = useState([]);
@@ -31,9 +34,12 @@ export default function LocationProvider({ children }) {
       const fetchLocation = async () => {
         try {
           console.log("sal");
-          const loc = await getIpLoc(token);
-          console.log("locatie este :" + loc.longitude + loc.latitude);
-          setLocation(loc);
+          const loc = await startWRefresh(getIpLoc);
+          const loc_json = await loc.json();
+          console.log(
+            "locatie este :" + loc_json.longitude + loc_json.latitude
+          );
+          setLocation(loc_json);
         } catch (error) {
           setErrorMessage(error.message);
         }
@@ -41,23 +47,27 @@ export default function LocationProvider({ children }) {
 
       fetchLocation();
     }
-  }, [token]);
+  }, [token, placeId, preciseLocationGranted, startWRefresh]);
 
   useEffect(() => {
     const fetchPlaceId = async () => {
       console.log("place iddd:", placeId);
       if (token && placeId && !preciseLocationGranted) {
         try {
-          const loc = await getPlaceGeoLoc(token, placeId);
-          loc_ref.current = loc;
-          setLocation(loc);
+          const loc = await startWRefresh(getPlaceGeoLoc, placeId);
+          if (!loc.ok) {
+            throw new Error("Ceva este in neregula.");
+          }
+          const loc_json = await loc.json();
+          loc_ref.current = loc_json;
+          setLocation(loc_json);
         } catch (error) {
           setErrorMessage(error.message);
         }
       }
     };
     fetchPlaceId();
-  }, [placeId]);
+  }, [token, placeId, preciseLocationGranted, startWRefresh]);
 
   const requestPreciseLocation = async () => {
     if (preciseLocationGranted) {
@@ -85,8 +95,12 @@ export default function LocationProvider({ children }) {
   const debouncedFetchPredictions = useCallback(
     debounce(async (text) => {
       try {
-        const results = await fetchPredictions(text, token);
-        setPredictions(results);
+        const results = await startWRefresh(fetchPredictions, text);
+        if (!results.ok) {
+          throw new Error("Ceva este in neregula.");
+        }
+        const results_json = await results.json();
+        setPredictions(results_json.predictions);
         setErrorMessage("");
       } catch (error) {
         setErrorMessage(error.message);

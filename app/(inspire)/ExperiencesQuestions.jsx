@@ -1,13 +1,37 @@
 import { Text, View, StyleSheet } from "react-native";
-
+import { useContext, useRef, useState } from "react";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Slider from "@/components/slider";
-import BorderButton from "@/components/borderPressable";
-import BaseQuestions from "@/components/BaseQuestions";
+import BorderButtonList from "@/components/borderPressable";
+import { QuestionsContext } from "@/context/QuestionsContext";
 import GoButton from "@/components/Gobutton";
 import AnimatedLogo from "@/components/animatedSmallLogo";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import NightLifeQuestions from "./NightLifeQuestions_1";
+
 export default function ExperiencesQuestions() {
+  const { setExperienceQuestions } = useContext(QuestionsContext);
+  const [error, setError] = useState(false);
+  const ExperienceQuestions = useRef({
+    adrenaline: null,
+    physical: 0,
+    indoorOutdoor: null,
+  });
+
+  const handleContinue = () => {
+    const allAnswers = Object.values(ExperienceQuestions.current).every(
+      (item) => {
+        if (item === 0) return true;
+        else return Boolean(item);
+      }
+    );
+    if (!allAnswers) {
+      setError(true);
+      return;
+    }
+    setError(false);
+    setExperienceQuestions(ExperienceQuestions.current);
+  };
   return (
     <View style={styles.main}>
       <AnimatedLogo />
@@ -22,22 +46,38 @@ export default function ExperiencesQuestions() {
         </Text>
       </View>
       <Text style={styles.text}>Activitati pline de adrenalina?</Text>
-      <View style={styles.row}>
-        <BorderButton text={"da"} />
-        <BorderButton text={"nu"} />
-        <BorderButton text={"ambele"} />
-      </View>
+      <BorderButtonList
+        labels={["da", "nu", "ambele"]}
+        WIDTH={"60%"}
+        oneOption={true}
+        callback={(labels) => {
+          ExperienceQuestions.current.adrenaline = labels[0];
+        }}
+      />
       <Text style={styles.text}>
         Experiente solicitante fizic sau relaxante?
       </Text>
-      <Slider labels={["usor", "fizic"]} />
+      <Slider
+        labels={["usor", "fizic"]}
+        callback={(value) => (ExperienceQuestions.current.physical = value)}
+      />
       <Text style={[styles.text, { marginTop: 35 }]}>Indoor sau outdoor?</Text>
-      <View style={[styles.row, { width: "70%" }]}>
-        <BorderButton text={"indoor"} />
-        <BorderButton text={"outdoor"} />
-        <BorderButton text={"ambele"} />
-      </View>
-      <GoButton text={"continua"} />
+      <BorderButtonList
+        labels={["indoor", "outdoor", "ambele"]}
+        WIDTH={"70%"}
+        oneOption={true}
+        callback={(labels) => {
+          ExperienceQuestions.current.indoorOutdoor = labels[0];
+        }}
+      />
+      <GoButton text={"continua"} onSwipe={handleContinue} />
+      {error ? (
+        <Text style={{ color: "red", marginTop: 20 }}>
+          Asigura-te ca ai selectat tot!
+        </Text>
+      ) : (
+        <Text style={{ color: "red", marginTop: 20 }}>{""}</Text>
+      )}
     </View>
   );
 }
@@ -63,11 +103,6 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Medium",
     fontSize: 15,
     textAlign: "center",
-  },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "60%",
   },
   main: {
     flex: 1,

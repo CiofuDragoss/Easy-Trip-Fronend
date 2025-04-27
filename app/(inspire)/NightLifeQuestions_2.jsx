@@ -1,13 +1,43 @@
 import { Text, View, StyleSheet } from "react-native";
-
+import { useContext, useRef, useState } from "react";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Slider from "@/components/slider";
-import BorderButton from "@/components/borderPressable";
-import BaseQuestions from "@/components/BaseQuestions";
+import BorderButtonList from "@/components/borderPressable";
+import { QuestionsContext } from "@/context/QuestionsContext";
 import GoButton from "@/components/Gobutton";
 import AnimatedLogo from "@/components/animatedSmallLogo";
 import AntDesign from "@expo/vector-icons/AntDesign";
+
 export default function NightLifeQuestions() {
+  const { setNightLifeQuestions } = useContext(QuestionsContext);
+  const [error, setError] = useState(false);
+  const NightLifeQuestions = useRef({
+    atmosphere: 0,
+    locationTypes: null,
+    musicTypes: null,
+  });
+
+  const handleContinue = () => {
+    const allAnswers = Object.values(NightLifeQuestions.current).every(
+      (item) => {
+        if (Array.isArray(item)) {
+          return item.length > 0;
+        } else if (item === 0) {
+          return true;
+        }
+        return Boolean(item);
+      }
+    );
+    if (!allAnswers) {
+      setError(true);
+      return;
+    }
+    setError(false);
+    setNightLifeQuestions((prev) => ({
+      ...prev,
+      ...NightLifeQuestions.current,
+    }));
+  };
   return (
     <View style={styles.main}>
       <AnimatedLogo />
@@ -17,31 +47,54 @@ export default function NightLifeQuestions() {
       <Text style={styles.text}>
         Doresti o atmosfera linistita sau muzica la maxim si vibe de party?
       </Text>
-      <Slider labels={["linistita", "nebunie"]} />
+      <Slider
+        labels={["linistita", "nebunie"]}
+        callback={(value) => {
+          NightLifeQuestions.current.atmosphere = value;
+        }}
+      />
       <Text style={[styles.text, { marginTop: 35 }]}>
         Preferi anumite tipuri de locatii?
       </Text>
-      <View style={[styles.row, { width: "90%" }]}>
-        <BorderButton text={"Karaoke"} />
-        <BorderButton text={"Pub"} />
-        <BorderButton text={"Lounge"} />
-        <BorderButton text={"Bar"} />
-        <BorderButton text={"Rooftop Bar"} />
-        <BorderButton text={"Club de Noapte"} />
-
-        <BorderButton text={"Nu conteaza"} />
-      </View>
+      <BorderButtonList
+        labels={[
+          "Karaoke",
+          "Pub",
+          "Lounge",
+          "Bar",
+          "Rooftop Bar",
+          "Club de Noapte",
+          "Nu conteaza",
+        ]}
+        WIDTH={"90%"}
+        callback={(labels) => {
+          NightLifeQuestions.current.locationTypes = labels;
+        }}
+      />
       <Text style={styles.text}>Ce tip de muzica preferi?</Text>
-      <View style={[styles.row, { width: "90%" }]}>
-        <BorderButton text={"Rock"} />
-        <BorderButton text={"Jazz"} />
-        <BorderButton text={"pop"} />
-        <BorderButton text={"Electronica"} />
-        <BorderButton text={"Rap & Trap"} />
+      <BorderButtonList
+        labels={[
+          "Rock",
+          "Jazz",
+          "pop",
+          "Electronica",
+          "Rap & Trap",
+          "Nu conteaza",
+        ]}
+        WIDTH={"90%"}
+        callback={(labels) => {
+          NightLifeQuestions.current.musicTypes = labels;
+        }}
+      />
+      <GoButton text={"continua"} onSwipe={handleContinue} />
 
-        <BorderButton text={"Nu conteaza"} />
-      </View>
-      <GoButton text={"continua"} />
+      {error ? (
+        <Text style={[styles.infoText, { color: "red", marginTop: 20 }]}>
+          Asigura-te ca ai completat tot!
+        </Text>
+      ) : (
+        <Text style={styles.infoText}>{""}</Text>
+      )}
     </View>
   );
 }
@@ -67,13 +120,6 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Medium",
     fontSize: 15,
     textAlign: "center",
-  },
-  row: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "60%",
-    flexWrap: "wrap",
   },
   main: {
     flex: 1,

@@ -1,9 +1,7 @@
 const routes = {
   //backend_base: "http://192.168.1.101:8000",
-  //backend_base:"http://192.168.100.145:8000",
-  backend_base: "http://10.0.2.2:8000",
-  get_ip: "https://api.ipify.org?format=json",
-  get_ip_loc: "http://ip-api.com/json/",
+  backend_base: "http://192.168.100.145:8000",
+  //backend_base: "http://10.0.2.2:8000",
   ///get_placeid_loc
 };
 

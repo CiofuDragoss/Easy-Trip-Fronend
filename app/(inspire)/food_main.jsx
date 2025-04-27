@@ -1,15 +1,37 @@
 import { Text, View, StyleSheet } from "react-native";
-
+import { useState, useRef, useContext } from "react";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Slider from "@/components/slider";
-import BorderButton from "@/components/borderPressable";
-import BaseQuestions from "@/components/BaseQuestions";
-import GoButton from "@/components/Gobutton";
-import AnimatedLogo from "@/components/animatedSmallLogo";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import { useNavigation } from "expo-router";
+import BorderButtonList from "@/components/borderPressable";
 
+import GoButton from "@/components/Gobutton";
+
+import AnimatedLogo from "@/components/animatedSmallLogo";
+import { useNavigation } from "expo-router";
+import { QuestionsContext } from "@/context/QuestionsContext";
 export default function ExperiencesQuestions() {
+  const { setFoodQuestions } = useContext(QuestionsContext);
+  const [error, setError] = useState(false);
+  const FoodQuestions = useRef({
+    mealType: 0,
+    locationType: 0,
+    veganOptions: 0,
+    ambiance: 0,
+  });
+
+  const handleContinue = () => {
+    const allAnsweared = Object.values(FoodQuestions.current).every((value) => {
+      if (value === 0) return true;
+      return Boolean(value);
+    });
+    if (!allAnsweared) {
+      setError(true);
+      return;
+    }
+    setError(false);
+    setFoodQuestions(FoodQuestions.current);
+    navigation.navigate("food_sec");
+  };
   const navigation = useNavigation();
   return (
     <View style={styles.main}>
@@ -18,26 +40,43 @@ export default function ExperiencesQuestions() {
       <View style={styles.line} />
 
       <Text style={styles.text}>Ce masa doriti sa luati?</Text>
-      <Slider labels={["Mic-dejun", "Pranz", "Cina"]} />
+      <Slider
+        labels={["Mic-dejun", "Brunch", "Pranz", "Cina"]}
+        callback={(value) => (FoodQuestions.current.mealType = value)}
+      />
 
       <Text style={[styles.text, { marginTop: 35 }]}>
         Fast food sau locatii sit-down?
       </Text>
-      <Slider labels={["Fast-Food", "Sit-down", "Premium"]} />
+      <Slider
+        labels={["Fast-Food", "Sit-down", "Premium"]}
+        callback={(value) => (FoodQuestions.current.locationType = value)}
+      />
       <Text style={[styles.text, { marginTop: 35 }]}>
         Optiunile vegane sunt importante?
       </Text>
-      <BorderButton text={"Da"} />
-      <Text style={styles.text}>Ce tip de ambianta preferi la restaurant?</Text>
-      <Slider labels={["casual", "sofisticata"]} />
-      <Text style={[styles.text, { marginTop: 35 }]}>
-        Ce tip de bucatarie preferi?
-      </Text>
-
-      <GoButton
-        text={"continua"}
-        onSwipe={() => navigation.navigate("food_sec")}
+      <BorderButtonList
+        labels={["Da"]}
+        WIDTH={"100%"}
+        callback={(labels) =>
+          (FoodQuestions.current.veganOptions = labels.length > 0 ? 1 : 0)
+        }
       />
+      <Text style={styles.text}>Ce tip de ambianta preferi la restaurant?</Text>
+      <Slider
+        labels={["casual", "sofisticata"]}
+        callback={(value) => (FoodQuestions.current.ambiance = value)}
+      />
+      <View style={{ marginTop: 20 }}>
+        <GoButton text={"continua"} onSwipe={handleContinue} />
+      </View>
+      {error ? (
+        <Text style={{ color: "red", marginTop: 20 }}>
+          Asigura-te ca ai selectat tot!
+        </Text>
+      ) : (
+        <Text style={{ color: "red", marginTop: 20 }}>{""}</Text>
+      )}
     </View>
   );
 }
@@ -63,13 +102,6 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Medium",
     fontSize: 15,
     textAlign: "center",
-  },
-  row: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "60%",
-    flexWrap: "wrap",
   },
   main: {
     flex: 1,

@@ -1,13 +1,40 @@
 import { Text, View, StyleSheet } from "react-native";
-
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { useRef, useContext, useState } from "react";
 import Slider from "@/components/slider";
-import BorderButton from "@/components/borderPressable";
-import BaseQuestions from "@/components/BaseQuestions";
+import BorderButtonList from "@/components/borderPressable";
 import GoButton from "@/components/Gobutton";
 import AnimatedLogo from "@/components/animatedSmallLogo";
 import AntDesign from "@expo/vector-icons/AntDesign";
-export default function ExperiencesQuestions() {
+import { QuestionsContext } from "@/context/QuestionsContext";
+import { useNavigation } from "expo-router";
+
+export default function HistoryQuestions() {
+  const navigation = useNavigation();
+  const { setHistoryQuestions } = useContext(QuestionsContext);
+  const [error, setError] = useState(false);
+  const historyQuestions = useRef({
+    experienceType: 0,
+    artType: 0,
+    locationTypes: null,
+  });
+
+  const handleContinue = () => {
+    const allAnswers = Object.values(historyQuestions.current).every((item) => {
+      if (item === 0) return true;
+      else if (Array.isArray(item)) {
+        console.log("item", item.length);
+        return item.length > 0;
+      } else {
+        return Boolean(item);
+      }
+    });
+    if (!allAnswers) {
+      setError(true);
+      return;
+    }
+    setError(false);
+    setHistoryQuestions(historyQuestions.current);
+  };
   return (
     <View style={styles.main}>
       <AnimatedLogo />
@@ -15,7 +42,6 @@ export default function ExperiencesQuestions() {
         <AntDesign name="questioncircleo" size={24} color="black" />
         <View style={styles.line} />
         <Text style={styles.infoText}>
-          {" "}
           Completeaza cu atentie criteriile si vom cauta cele mai potrivite
           experiente culturale.
         </Text>
@@ -23,24 +49,39 @@ export default function ExperiencesQuestions() {
       <Text style={styles.text}>
         Ce tip de experienta culturala te atrage cel mai mult?
       </Text>
-      <Slider labels={["Istorica & Arhitecturala", "Artistică & vizuală"]} />
+      <Slider
+        labels={["Istorica & Arhitecturala", "Artistică & vizuală"]}
+        callback={(value) => (historyQuestions.current.experienceType = value)}
+      />
       <Text style={[styles.text, { marginTop: 55 }]}>
         Ce tip de arta preferi?
       </Text>
-      <Slider labels={["Populara", "Clasica", "Moderna"]} />
+      <Slider
+        labels={["Populara", "Clasica", "Moderna"]}
+        callback={(value) => (historyQuestions.current.artType = value)}
+      />
       <Text style={[styles.text, { marginTop: 55 }]}>
         Ce te atrage în special?
       </Text>
-      <View style={[styles.row, { width: "90%" }]}>
-        <BorderButton text={"Muzee"} />
-        <BorderButton text={"Expozitii"} />
-        <BorderButton text={"Galerii de arta"} />
-        <BorderButton text={"Monumente"} />
-        <BorderButton text={"Arhitectura"} />
-
-        <BorderButton text={"Antichitati & obiecte Artizanale"} />
-      </View>
-      <GoButton text={"continua"} />
+      <BorderButtonList
+        labels={[
+          "Muzee",
+          "Expozitii",
+          "Galerii de arta",
+          "Monumente",
+          "Arhitectura",
+        ]}
+        WIDTH={"90%"}
+        callback={(labels) => (historyQuestions.current.locationTypes = labels)}
+      />
+      <GoButton text={"continua"} onSwipe={handleContinue} />
+      {error ? (
+        <Text style={{ color: "red", marginTop: 20 }}>
+          Asigura-te ca ai selectat tot!
+        </Text>
+      ) : (
+        <Text style={{ color: "red", marginTop: 20 }}>{""}</Text>
+      )}
     </View>
   );
 }
@@ -66,13 +107,6 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Medium",
     fontSize: 15,
     textAlign: "center",
-  },
-  row: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "60%",
-    flexWrap: "wrap",
   },
   main: {
     flex: 1,

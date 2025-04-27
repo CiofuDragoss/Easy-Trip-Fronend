@@ -1,9 +1,9 @@
 import { Text, View, StyleSheet, Pressable, Platform } from "react-native";
-import { useState } from "react";
+import { useState, useRef, useContext } from "react";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Slider from "@/components/slider";
-import BorderButton from "@/components/borderPressable";
-import BaseQuestions from "@/components/BaseQuestions";
+import BorderButtonList from "@/components/borderPressable";
+import { QuestionsContext } from "@/context/QuestionsContext";
 import GoButton from "@/components/Gobutton";
 import AnimatedLogo from "@/components/animatedSmallLogo";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -18,16 +18,49 @@ const swipeListData = (() => {
   }
   return result;
 })();
+
 export default function NightLifeQuestions() {
-  const DATA = new Date();
-  const [date, setDate] = useState(new Date());
-  const [show, setShow] = useState(false);
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShow(Platform.OS === "ios");
-    setDate(currentDate);
-  };
+  const { setNightLifeQuestions } = useContext(QuestionsContext);
+  const NightLifeQuestions = useRef({
+    date: new Date().toString(),
+    duration: 4,
+    groupType: null,
+  });
+  const [error, setError] = useState(false);
   const navigation = useNavigation();
+
+  const [date, setDate] = useState(new Date());
+  const [showDate, setShowDate] = useState(false);
+  const [show, setShow] = useState(false);
+  const handleContinue = () => {
+    const allAnswers = Object.values(NightLifeQuestions.current).every(
+      (item) => {
+        return Boolean(item);
+      }
+    );
+    if (!allAnswers) {
+      setError(true);
+      return;
+    }
+    setError(false);
+    setNightLifeQuestions(NightLifeQuestions.current);
+    navigation.navigate("NightLife_sec");
+  };
+  const onChange = (event, selectedDate) => {
+    setShow(Platform.OS === "ios");
+    if (!selectedDate) return;
+
+    const now = new Date();
+    const chosen = new Date(now);
+    chosen.setHours(selectedDate.getHours(), selectedDate.getMinutes(), 0, 0);
+    if (chosen <= now) {
+      chosen.setDate(chosen.getDate() + 1);
+    }
+    setDate(chosen);
+    setShowDate(true);
+    NightLifeQuestions.current.date = chosen.toString();
+  };
+
   return (
     <View style={styles.main}>
       <AnimatedLogo />
@@ -57,25 +90,40 @@ export default function NightLifeQuestions() {
           />
         )}
       </Pressable>
-      <Text key={date} style={[styles.infoText, { marginTop: 20 }]}>
-        Ai selectat ora {`${date.getHours()}:${date.getMinutes()}`}
-      </Text>
+      {showDate ? (
+        <Text style={[styles.infoText, { marginTop: 20 }]}>
+          Ai selectat ora{" "}
+          {`${date.getHours()}:${
+            date.getMinutes().length == 1
+              ? "0" + date.getMinutes()
+              : date.getMinutes()
+          }`}
+        </Text>
+      ) : (
+        <Text style={[styles.infoText, { marginTop: 20 }]}>{""}</Text>
+      )}
       <Text style={styles.text}>Cat timp doresti sa stai?</Text>
-      <SwipeListValue data={swipeListData} />
-      <Text style={styles.text}>Solo sau in grup?</Text>
-      <View
-        style={[styles.row, { width: "55%", justifyContent: "space-between" }]}
-      >
-        <BorderButton text={"Solo"} />
-        <BorderButton text={"Cuplu"} />
-        <BorderButton text={"Grup"} />
-      </View>
-      <GoButton
-        text={"continua"}
-        onSwipe={() => {
-          navigation.navigate("NightLife_sec");
-        }}
+      <SwipeListValue
+        data={swipeListData}
+        onSelectItem={(index) =>
+          (NightLifeQuestions.current.duration = swipeListData[index].key)
+        }
       />
+      <Text style={styles.text}>Solo sau in grup?</Text>
+      <BorderButtonList
+        labels={["Solo", "Cuplu", "Grup"]}
+        oneOption={true}
+        WIDTH={"55%"}
+        callback={(labels) =>
+          (NightLifeQuestions.current.groupType = labels[0])
+        }
+      />
+      <GoButton text={"continua"} onSwipe={handleContinue} />
+      {error && (
+        <Text style={[styles.infoText, { color: "red", marginTop: 20 }]}>
+          Te rog sa completezi toate campurile!
+        </Text>
+      )}
     </View>
   );
 }
@@ -109,13 +157,6 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Medium",
     fontSize: 15,
     textAlign: "center",
-  },
-  row: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "60%",
-    flexWrap: "wrap",
   },
   main: {
     flex: 1,

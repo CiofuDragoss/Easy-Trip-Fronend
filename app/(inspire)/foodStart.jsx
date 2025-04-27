@@ -3,8 +3,8 @@ import { useState } from "react";
 import { useNavigation } from "expo-router";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Slider from "@/components/slider";
-import BorderButton from "@/components/borderPressable";
-import BaseQuestions from "@/components/BaseQuestions";
+import BorderButtonList from "@/components/borderPressable";
+
 import GoButton from "@/components/Gobutton";
 import AnimatedLogo from "@/components/animatedSmallLogo";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -12,6 +12,11 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 export default function ExperiencesQuestions() {
   const navigation = useNavigation();
   const [option, setOption] = useState("Mancare");
+
+  const handleOptionChange = (label) => {
+    setOption(label[0]);
+  };
+
   return (
     <View style={styles.main}>
       <AnimatedLogo />
@@ -24,17 +29,11 @@ export default function ExperiencesQuestions() {
           Dining. Totul depinde de criteriile introduse.
         </Text>
       </View>
-      <BorderButton
-        text={"Mancare"}
-        callback={() => {
-          setOption("Mancare");
-        }}
-      />
-      <BorderButton
-        text={"Bauturi"}
-        callback={() => {
-          setOption("Bauturi");
-        }}
+      <BorderButtonList
+        labels={["Mancare", "Bauturi"]}
+        WIDTH={"80%"}
+        oneOption={true}
+        callback={handleOptionChange}
       />
       <GoButton
         key={option}
@@ -55,8 +54,9 @@ const styles = StyleSheet.create({
     marginVertical: 2,
   },
   info: {
+    margin: 20,
     width: "70%",
-    height: "22%",
+    height: "19%",
     borderRadius: 20,
     backgroundColor: "#4dc2c2",
     padding: 10,
@@ -66,13 +66,6 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Medium",
     fontSize: 15,
     textAlign: "center",
-  },
-  row: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "60%",
-    flexWrap: "wrap",
   },
   main: {
     flex: 1,

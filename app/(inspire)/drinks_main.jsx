@@ -1,56 +1,115 @@
 import { Text, View, StyleSheet } from "react-native";
-
+import { useContext, useState, useRef } from "react";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Slider from "@/components/slider";
-import BorderButton from "@/components/borderPressable";
-import BaseQuestions from "@/components/BaseQuestions";
+import BorderButtonList from "@/components/borderPressable";
+import { QuestionsContext } from "@/context/QuestionsContext";
 import GoButton from "@/components/Gobutton";
 import AnimatedLogo from "@/components/animatedSmallLogo";
 import AntDesign from "@expo/vector-icons/AntDesign";
 
-export default function ExperiencesQuestions() {
+export default function DrinksQuestions() {
+  const { setDrinksQuestions } = useContext(QuestionsContext);
+  const [error, setError] = useState(false);
+  const DrinksQuestions = useRef({
+    groupType: "",
+    drinkTypes: [],
+    locationTypes: [],
+    locationFeatures: [],
+  });
+  const handleContinue = () => {
+    const allAnsweared = Object.values(DrinksQuestions.current).every(
+      (item) => {
+        if (Array.isArray(item)) {
+          return item.length > 0;
+        }
+
+        return Boolean(item);
+      }
+    );
+    console.log(
+      "🔍 current answers:",
+      DrinksQuestions.current,
+      "allAnswered?",
+      allAnsweared
+    );
+    if (!allAnsweared) {
+      setError(true);
+
+      return;
+    }
+    setError(false);
+
+    setDrinksQuestions(DrinksQuestions.current);
+  };
   return (
     <View style={styles.main}>
       <AnimatedLogo />
       <View style={styles.line} />
 
       <Text style={styles.text}>Sunteti in grup?</Text>
-      <View style={[styles.row, { width: "90%" }]}>
-        <BorderButton text={"solo"} />
-        <BorderButton text={"cuplu"} />
-        <BorderButton text={"grup"} />
-      </View>
+      <BorderButtonList
+        labels={["solo", "cuplu", "grup"]}
+        WIDTH={"90%"}
+        oneOption={true}
+        callback={(labels) => (DrinksQuestions.current.groupType = labels[0])}
+      />
 
       <Text style={styles.text}>Ce bauturi doresti să savurezi?</Text>
-      <View style={[styles.row, { width: "90%" }]}>
-        <BorderButton text={"Cafea"} />
-        <BorderButton text={"Bere"} />
-        <BorderButton text={"Vin"} />
-        <BorderButton text={"Cocktailuri"} />
-        <BorderButton text={"Ceai"} />
-        <BorderButton text={"Smoothies"} />
-        <BorderButton text={"Sucuri de fructe"} />
-      </View>
+      <BorderButtonList
+        labels={[
+          "Cafea",
+          "Bere",
+          "Vin",
+          "Cocktailuri",
+          "Ceai",
+          "Smoothies",
+          "Sucuri de fructe",
+          "Nu conteaza",
+        ]}
+        WIDTH={"90%"}
+        callback={(labels) => (DrinksQuestions.current.drinkTypes = labels)}
+      />
+
       <Text style={styles.text}>Preferi anumite tipuri de locatii?</Text>
-      <View style={[styles.row, { width: "90%" }]}>
-        <BorderButton text={"Cafenea"} />
-        <BorderButton text={"Bar"} />
-        <BorderButton text={"Ceainarie"} />
-        <BorderButton text={"Pub"} />
-        <BorderButton text={"Lounge"} />
-        <BorderButton text={"Smoothies bar"} />
-      </View>
+      <BorderButtonList
+        labels={[
+          "Cafenea",
+          "Bar",
+          "Ceainarie",
+          "Pub",
+          "Lounge",
+          "Smoothies bar",
+          "Nu conteaza",
+        ]}
+        WIDTH={"90%"}
+        callback={(labels) => (DrinksQuestions.current.locationTypes = labels)}
+      />
+
       <Text style={styles.text}>
         Ce caracteristici ai dori sa aiba locatiile?
       </Text>
-      <View style={[styles.row, { width: "90%" }]}>
-        <BorderButton text={"Cozy"} />
-        <BorderButton text={"Vegan"} />
-        <BorderButton text={"Sanatos"} />
-        <BorderButton text={"Traditional"} />
-        <BorderButton text={"Modern"} />
-      </View>
-      <GoButton text={"continua"} />
+      <BorderButtonList
+        labels={[
+          "Cozy",
+          "Vegan",
+          "Sanatos",
+          "Traditional",
+          "Modern",
+          "Nu conteaza",
+        ]}
+        WIDTH={"90%"}
+        callback={(labels) =>
+          (DrinksQuestions.current.locationFeatures = labels)
+        }
+      />
+
+      <GoButton text={"continua"} onSwipe={handleContinue} />
+      {error ? (
+        <Text style={styles.infoText}>Asigura-te ca ai selectat tot!</Text>
+      ) : (
+        <Text style={styles.infoText}>{""}</Text>
+      )}
     </View>
   );
 }
@@ -73,16 +132,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   infoText: {
+    marginTop: 8,
     fontFamily: "Poppins-Medium",
     fontSize: 15,
     textAlign: "center",
-  },
-  row: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "60%",
-    flexWrap: "wrap",
+    color: "red",
   },
   main: {
     flex: 1,

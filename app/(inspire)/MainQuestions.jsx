@@ -4,6 +4,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { AuthContext } from "@/context/AuthContext";
 import { useNavigation } from "expo-router";
 import { QuestionsContext } from "@/context/QuestionsContext";
+import BorderButtonList from "@/components/borderPressable";
+import Slider from "@/components/slider";
 import {
   FontAwesome5,
   Entypo,
@@ -12,31 +14,28 @@ import {
   FontAwesome6,
   FontAwesome,
 } from "@expo/vector-icons";
-import BaseQuestions from "@/components/BaseQuestions";
 import { useLocation } from "@/context/LocationContext";
 import SwipeList from "@/components/swipeList";
 import SwipeListValue from "@/components/flatListValue";
 import AnimatedQuestion from "@/components/animatedQustion";
 import GoButton from "@/components/Gobutton";
-import BorderButton from "@/components/borderPressable";
-const default__latitude_delta_val = 4.7;
+
 export default function MainQuestions() {
   const { location } = useLocation();
   const navigation = useNavigation();
 
   const { setMainQuestions } = useContext(QuestionsContext);
-  const [error, setError] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(2);
   const [selectedDistance, setSelectedDistance] = useState(3);
-  console.log(categories[selectedCategory].title);
-  console.log(distanta[selectedDistance].value);
-  useEffect(() => {
-    setError("");
-  }, []);
+  const budgetRef = useRef(0);
+  const handicapRef = useRef(false);
   const handleSwipe = () => {
     setMainQuestions({
-      category: categories[selectedCategory],
-      distance: distanta[selectedDistance],
+      region: location,
+      category: categories[selectedCategory].title,
+      distance: parseInt(distanta[selectedDistance].key),
+      budget: budgetRef.current,
+      handicap: handicapRef.current,
     });
     console.log("before navigation, selectedCategory index:", selectedCategory);
     console.log(
@@ -64,13 +63,23 @@ export default function MainQuestions() {
       </Text>
 
       <SwipeListValue data={distanta} onSelectItem={setSelectedDistance} />
-      <BaseQuestions />
+      <Text style={styles.text}>Care este bugetul tau?</Text>
+      <Slider
+        labels={["$", "$$", "$$$"]}
+        callback={(value) => (budgetRef.current = value)}
+      />
+      <Text style={[styles.text, { marginTop: 35 }]}>
+        Ai nevoie de acces pentru scaunul cu rotile?
+      </Text>
+      <BorderButtonList
+        labels={["Da"]}
+        callback={(labels) => (handicapRef.current = labels.length > 0)}
+      />
       <GoButton
         key={selectedCategory}
         text={"continua"}
         onSwipe={handleSwipe}
       />
-      {error && <Text style={styles.text}>{error}</Text>}
     </View>
   );
 }
@@ -86,11 +95,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   text: {
-    color: "red",
-    fontFamily: "Poppins-Medium",
-    fontSize: 14,
-    paddingHorizontal: 90,
-    marginTop: 10,
+    fontFamily: "Poppins-Bold",
+    fontSize: 15,
     textAlign: "center",
   },
 });

@@ -1,30 +1,65 @@
 import { Text, View, StyleSheet } from "react-native";
-
+import { useContext, useRef, useState } from "react";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Slider from "@/components/slider";
-import BorderButton from "@/components/borderPressable";
-import BaseQuestions from "@/components/BaseQuestions";
+import BorderButtonList from "@/components/borderPressable";
+import { QuestionsContext } from "@/context/QuestionsContext";
 import GoButton from "@/components/Gobutton";
 import AnimatedLogo from "@/components/animatedSmallLogo";
 import AntDesign from "@expo/vector-icons/AntDesign";
+
 export default function ExperiencesQuestions() {
+  const { setFoodQuestions } = useContext(QuestionsContext);
+  const FoodQuestions = useRef({
+    foodTypes: null,
+  });
+  const [error, setError] = useState(false);
+  const handleContinue = () => {
+    const allAnsweared = Object.values(FoodQuestions.current).every((item) => {
+      if (Array.isArray(item)) return item.length > 0;
+      return Boolean(item);
+    });
+    if (!allAnsweared) {
+      setError(true);
+      return;
+    }
+    setError(false);
+    setFoodQuestions((prev) => ({ ...prev, ...FoodQuestions.current }));
+  };
   return (
     <View style={styles.main}>
       <AnimatedLogo />
       <View style={styles.line} />
       <Text style={styles.text}>Preferati un anumit tip de bucatarie?</Text>
-      <View style={[styles.row, { width: "90%" }]}>
-        <BorderButton text={"Italiana"} />
-        <BorderButton text={"Chinezeasca"} />
-        <BorderButton text={"Mexicana"} />
-        <BorderButton text={"Indiana"} />
-        <BorderButton text={"Mediteraneana"} />
-        <BorderButton text={"Locala & Traditionala"} />
-        <BorderButton text={"Franceza"} />
-        <BorderButton text={"Thailandeza"} />
-        <BorderButton text={"Japoneza"} />
-      </View>
-      <GoButton text={"continua"} />
+      <BorderButtonList
+        labels={[
+          "Italiana",
+          "Chinezeasca",
+          "Mexicana",
+          "Indiana",
+          "Mediteraneana",
+          "Locala & Traditionala",
+          "Franceza",
+          "Thailandeza",
+          "Japoneza",
+          "Turceasca",
+          "Americana",
+          "Libaneza",
+          "Nu Conteaza",
+        ]}
+        WIDTH={"90%"}
+        callback={(labels) => {
+          FoodQuestions.current.foodTypes = labels;
+        }}
+      />
+      <GoButton text={"continua"} onSwipe={handleContinue} />
+      {error ? (
+        <Text style={{ color: "red", marginTop: 20 }}>
+          Asigura-te ca ai selectat tot!
+        </Text>
+      ) : (
+        <Text style={{ color: "red", marginTop: 20 }}>{""}</Text>
+      )}
     </View>
   );
 }
@@ -37,26 +72,6 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     borderBottomWidth: 1,
     marginVertical: 2,
-  },
-  info: {
-    width: "70%",
-    height: "22%",
-    borderRadius: 20,
-    backgroundColor: "#4dc2c2",
-    padding: 10,
-    alignItems: "center",
-  },
-  infoText: {
-    fontFamily: "Poppins-Medium",
-    fontSize: 15,
-    textAlign: "center",
-  },
-  row: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "60%",
-    flexWrap: "wrap",
   },
   main: {
     flex: 1,

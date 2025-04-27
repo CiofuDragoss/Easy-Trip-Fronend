@@ -17,7 +17,7 @@ const SignLogin = () => {
   });
 
   const signupForm = useAuthForm({
-    initialVal: { username: "", name: "", email: "", password: "" },
+    initialVal: { username: "", email: "", password: "" },
     onSubmit: signup,
   });
 
@@ -100,20 +100,6 @@ const SignLogin = () => {
             {form.errors.username && (
               <Text style={[styles.login_txt_small, { color: "red" }]}>
                 {form.errors.username}
-              </Text>
-            )}
-
-            <TextInput
-              style={styles.input}
-              placeholder="Nume complet"
-              value={form.values.name}
-              onChangeText={(text) => form.handleChange("name", text)}
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
-            {form.errors.name && (
-              <Text style={[styles.login_txt_small, { color: "red" }]}>
-                {form.errors.name}
               </Text>
             )}
 

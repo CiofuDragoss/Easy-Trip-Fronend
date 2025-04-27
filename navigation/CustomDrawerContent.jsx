@@ -9,10 +9,8 @@ import { AuthContext } from "../context/AuthContext";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 export default function CustomDrawerContent(props) {
-  console.log("CustomDrawerContent props:", props);
-  const { logOut, email } = useContext(AuthContext);
-  console.log("emailul", email);
-
+  const { logOut, email, username } = useContext(AuthContext);
+  console.log("username", username);
   return (
     <DrawerContentScrollView
       {...props}
@@ -22,7 +20,7 @@ export default function CustomDrawerContent(props) {
         <View style={styles.ball}>
           <MaterialIcons name="account-circle" size={40} color="black" />
         </View>
-        <Text style={styles.logout}>{email}</Text>
+        <Text style={styles.logout}>{username}</Text>
       </View>
       <View style={{ backgroundColor: "rgba(255, 0, 0, 0.1)", width: "100%" }}>
         <DrawerItemList {...props} />

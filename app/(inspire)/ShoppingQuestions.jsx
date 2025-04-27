@@ -1,13 +1,51 @@
 import { Text, View, StyleSheet } from "react-native";
-
+import { useState, useRef, useContext, useCallback } from "react";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Slider from "@/components/slider";
-import BorderButton from "@/components/borderPressable";
-import BaseQuestions from "@/components/BaseQuestions";
+import BorderButtonList from "@/components/borderPressable";
+import { QuestionsContext } from "@/context/QuestionsContext";
 import GoButton from "@/components/Gobutton";
 import AnimatedLogo from "@/components/animatedSmallLogo";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { useApiWithRefresh } from "@/hooks/refreshHook";
+import { sendShopping } from "@/utils/api";
 export default function ExperiencesQuestions() {
+  const { setShoppingQuestions, MainQuestions } = useContext(QuestionsContext);
+  const { startWRefresh } = useApiWithRefresh();
+  const [error, setError] = useState(false);
+  const ShoppingQuestions = useRef({
+    shoppingLocType: 0,
+    shoppingExperience: null,
+  });
+
+  const send = useCallback(async () => {
+    if (!error) {
+      console.log("heloooo");
+      await startWRefresh(sendShopping, {
+        MainQuestions,
+        ShoppingQuestions: ShoppingQuestions.current,
+      });
+    }
+  }, [MainQuestions, startWRefresh]);
+  const handleContinue = () => {
+    const allAnsweared = Object.values(ShoppingQuestions.current).every(
+      (value) => {
+        if (value === 0) return true;
+        else if (Array.isArray(value)) {
+          return value.length > 0;
+        }
+        return Boolean(value);
+      }
+    );
+    if (!allAnsweared) {
+      setError(true);
+      return;
+    }
+    setError(false);
+    setShoppingQuestions(ShoppingQuestions.current);
+
+    send();
+  };
   return (
     <View style={styles.main}>
       <AnimatedLogo />
@@ -23,21 +61,39 @@ export default function ExperiencesQuestions() {
         Cat de mult te atrag magazinele sau centrele comerciale mari cu branduri
         renumite fata de cele magazine cu produse locale si autentice?
       </Text>
-      <Slider labels={["autentic", "global"]} />
+      <Slider
+        labels={["autentic", "global"]}
+        callback={(value) =>
+          (ShoppingQuestions.current.shoppingLocType = value)
+        }
+      />
 
       <Text style={[styles.text, { marginTop: 35 }]}>
         Ce tip de experienta de shopping cauti?
       </Text>
-      <View style={[styles.row, { width: "90%" }]}>
-        <BorderButton text={"Moda și accesorii"} />
-        <BorderButton text={"Produse locale"} />
-        <BorderButton text={"Cosmetice si parfumuri"} />
-        <BorderButton text={"Bijuterii"} />
-        <BorderButton text={"Souveniruri & Cadouri"} />
-
-        <BorderButton text={"Antichitati & obiecte Artizanale"} />
-      </View>
-      <GoButton text={"continua"} />
+      <BorderButtonList
+        labels={[
+          "Moda si accesorii",
+          "Produse locale",
+          "Cosmetice si parfumuri",
+          "Bijuterii",
+          "Souveniruri & Cadouri",
+          "Antichitati ",
+          "Librarii",
+        ]}
+        WIDTH={"100%"}
+        callback={(labels) =>
+          (ShoppingQuestions.current.shoppingExperience = labels)
+        }
+      />
+      <GoButton text={"continua"} onSwipe={handleContinue} />
+      {error ? (
+        <Text style={{ color: "red", marginTop: 20 }}>
+          Asigura-te ca ai selectat tot!
+        </Text>
+      ) : (
+        <Text style={{ color: "red", marginTop: 20 }}>{""}</Text>
+      )}
     </View>
   );
 }
@@ -63,13 +119,6 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Medium",
     fontSize: 15,
     textAlign: "center",
-  },
-  row: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "60%",
-    flexWrap: "wrap",
   },
   main: {
     flex: 1,
