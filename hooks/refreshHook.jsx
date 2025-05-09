@@ -4,7 +4,6 @@ import * as SecureStore from "expo-secure-store";
 import { AuthContext } from "@/context/AuthContext";
 export function useApiWithRefresh() {
   const { logOut, setUserToken, userToken } = useContext(AuthContext);
-
   const startWRefresh = useCallback(
     async (apiFunc, ...args) => {
       let response = await apiFunc(userToken, ...args);
