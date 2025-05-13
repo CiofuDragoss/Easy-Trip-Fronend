@@ -1,10 +1,17 @@
 import routes from "@/constants/routes";
-import { useCallback, useContext } from "react";
-import { useNavigation } from "expo-router";
-import { AuthContext } from "@/context/AuthContext";
 
 const BASE_URL = routes.backend_base;
-
+export async function resolve_photos(token, photos) {
+  const response = await fetch(`${BASE_URL}/resolve_img_urls`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(photos),
+  });
+  return response;
+}
 export async function refresh(token) {
   const response = await fetch(`${BASE_URL}/auth/refresh`, {
     method: "GET",
@@ -43,7 +50,16 @@ export async function getIpLoc(token) {
   return locationResponse;
 }
 
-export async function sendShopping(token, data) {
+export async function checkToken(token) {
+  const response = await fetch(`${BASE_URL}/auth/verify_access`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response;
+}
+
+export async function sendQuestions(token, data) {
   const response = await fetch(`${BASE_URL}/shopping_questions`, {
     method: "POST",
     headers: {

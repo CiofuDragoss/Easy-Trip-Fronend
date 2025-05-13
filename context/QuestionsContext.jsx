@@ -12,14 +12,13 @@ import { useApiWithRefresh } from "@/hooks/refreshHook";
 export const QuestionsContext = createContext();
 
 export default function QuestionsProvider({ children }) {
-  const { startWRefresh } = useApiWithRefresh();
   const [MainQuestions, setMainQuestions] = useState({});
   const [HistoryQuestions, setHistoryQuestions] = useState({});
   const [ExperienceQuestions, setExperienceQuestions] = useState({});
   const [FoodQuestions, setFoodQuestions] = useState({});
   const [DrinksQuestions, setDrinksQuestions] = useState({});
   const [NightLifeQuestions, setNightLifeQuestions] = useState({});
-  const [ShoppingQuestions, setShoppingQuestions] = useState({});
+  const [SecondaryQuestions, setSecondaryQuestions] = useState({});
 
   console.log(
     "MainQuestions",
@@ -33,9 +32,7 @@ export default function QuestionsProvider({ children }) {
     "DrinksQuestions",
     DrinksQuestions,
     "NightLifeQuestions",
-    NightLifeQuestions,
-    "ShoppingQuestions",
-    ShoppingQuestions
+    NightLifeQuestions
   );
   return (
     <QuestionsContext.Provider
@@ -47,8 +44,9 @@ export default function QuestionsProvider({ children }) {
         setDrinksQuestions,
         DrinksQuestions,
         setNightLifeQuestions,
-        setShoppingQuestions,
+        setSecondaryQuestions,
         MainQuestions,
+        SecondaryQuestions,
       }}
     >
       {children}

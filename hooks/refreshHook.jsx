@@ -2,6 +2,7 @@ import { useState, useRef, useCallback, useContext } from "react";
 import { refresh } from "@/utils/api";
 import * as SecureStore from "expo-secure-store";
 import { AuthContext } from "@/context/AuthContext";
+import { checkToken } from "@/utils/api";
 export function useApiWithRefresh() {
   const { logOut, setUserToken, userToken } = useContext(AuthContext);
   const startWRefresh = useCallback(
@@ -31,6 +32,17 @@ export function useApiWithRefresh() {
     },
     [logOut, setUserToken, userToken]
   );
+  const startWSRefresh = useCallback(
+    async (url, configure) => {
+      const check = await startWRefresh(checkToken, userToken);
+      const ws = new WebSocket(url, null, {
+        headers: { Authorization: `Bearer ${userToken}` },
+      });
+      configure(ws);
 
-  return { startWRefresh };
+      return ws;
+    },
+    [startWRefresh, userToken]
+  );
+  return { startWRefresh, startWSRefresh };
 }

@@ -1,32 +1,22 @@
 import { Text, View, StyleSheet } from "react-native";
 import { useState, useRef, useContext, useCallback } from "react";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Slider from "@/components/slider";
 import BorderButtonList from "@/components/borderPressable";
 import { QuestionsContext } from "@/context/QuestionsContext";
 import GoButton from "@/components/Gobutton";
 import AnimatedLogo from "@/components/animatedSmallLogo";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { useApiWithRefresh } from "@/hooks/refreshHook";
-import { sendShopping } from "@/utils/api";
-export default function ExperiencesQuestions() {
-  const { setShoppingQuestions, MainQuestions } = useContext(QuestionsContext);
-  const { startWRefresh } = useApiWithRefresh();
+import { useNavigation } from "expo-router";
+export default function ShoppingQuestions() {
+  const { setSecondaryQuestions, MainQuestions } = useContext(QuestionsContext);
+  const navigation = useNavigation();
+
   const [error, setError] = useState(false);
   const ShoppingQuestions = useRef({
     shoppingLocType: 0,
     shoppingExperience: null,
   });
 
-  const send = useCallback(async () => {
-    if (!error) {
-      console.log("heloooo");
-      await startWRefresh(sendShopping, {
-        MainQuestions,
-        ShoppingQuestions: ShoppingQuestions.current,
-      });
-    }
-  }, [MainQuestions, startWRefresh]);
   const handleContinue = () => {
     const allAnsweared = Object.values(ShoppingQuestions.current).every(
       (value) => {
@@ -42,9 +32,8 @@ export default function ExperiencesQuestions() {
       return;
     }
     setError(false);
-    setShoppingQuestions(ShoppingQuestions.current);
-
-    send();
+    setSecondaryQuestions(ShoppingQuestions.current);
+    navigation.navigate("Results");
   };
   return (
     <View style={styles.main}>
