@@ -3,7 +3,7 @@ import { Animated, Text, StyleSheet, Pressable } from "react-native";
 import colors from "../constants/colors";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 
-export default function AnimatedLogo({ style }) {
+export default function AnimatedLogo({ style, style2, style3, size }) {
   const translateY = useRef(new Animated.Value(0)).current;
 
   const startAnimation = () => {
@@ -33,8 +33,9 @@ export default function AnimatedLogo({ style }) {
       lineHeight: 63,
     },
     plane: {
-      marginLeft: "0.01%",
-      marginBottom: "14%",
+      right: -17,
+      top: 5,
+      position: "absolute",
     },
     logoContainer: {
       position: "relative",
@@ -53,12 +54,12 @@ export default function AnimatedLogo({ style }) {
           { transform: [{ translateY: translateY }] },
         ]}
       >
-        <Text style={styles.logo}>EasyTrip</Text>
+        <Text style={[styles.logo, style2]}>EasyTrip</Text>
         <FontAwesome
           name="plane"
-          size={20}
+          size={size ? size : 20}
           color={colors.logo_icon}
-          style={styles.plane}
+          style={[styles.plane, style3]}
         />
       </Animated.View>
     </Pressable>

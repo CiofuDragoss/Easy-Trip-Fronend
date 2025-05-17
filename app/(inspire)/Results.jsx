@@ -3,10 +3,11 @@ import { useState, useRef, useContext, useCallback, useEffect } from "react";
 import { ActivityIndicator } from "react-native";
 import { QuestionsContext } from "@/context/QuestionsContext";
 import { useRecommendWs } from "../../hooks/WsHook";
-import AnimatedLogo from "@/components/animatedLogo";
+import AnimatedLogo from "@/components/animatedSmallLogo";
 import { useNavigation } from "expo-router";
-import placeContainer from "@/components/PlaceContainer";
-import PlaceContainer from "@/components/PlaceContainer";
+import PlaceDisplayList from "@/components/placesDisplayList";
+import { SafeAreaView } from "react-native-safe-area-context";
+
 export default function Results() {
   const { SecondaryQuestions, MainQuestions } = useContext(QuestionsContext);
   const navigation = useNavigation();
@@ -66,10 +67,17 @@ export default function Results() {
   }
 
   return (
-    <View style={styles.main}>
-      <Text style={styles.text}>Recomandari</Text>
-      <PlaceContainer />
-    </View>
+    <SafeAreaView style={styles.main}>
+      <AnimatedLogo
+        style={{ marginTop: 3 }}
+        style2={{ fontSize: 40 }}
+        style3={{ right: -11, top: 9 }}
+        size={15}
+      />
+      <View style={styles.line}></View>
+
+      <PlaceDisplayList results={responses} />
+    </SafeAreaView>
   );
 }
 
@@ -83,10 +91,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  line: {
+    width: "20%",
+    height: 3,
+    backgroundColor: "grey",
+    borderRadius: 10,
+    marginBottom: 15,
+  },
   text: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginTop: 30,
+    fontSize: 25,
+    fontFamily: "Poppins-Bold",
+    marginVertical: 2,
   },
   cancelButton: {
     backgroundColor: "red",

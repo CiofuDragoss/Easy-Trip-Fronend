@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import {
   Animated,
   View,
@@ -13,11 +13,26 @@ const { width: WINDOW_WIDTH } = Dimensions.get("window");
 const CONTAINER_WIDTH = WINDOW_WIDTH * 0.9;
 const ITEM_SIZE = 350;
 const SEPARATOR = 20;
-
+function ImageLoader({ uri }) {
+  const [loading, setLoading] = useState(true);
+  return (
+    <View style={[styles.container, { width: ITEM_SIZE, height: ITEM_SIZE }]}>
+      <Image
+        source={uri}
+        style={{ width: ITEM_SIZE, height: ITEM_SIZE }}
+        onLoadStart={() => setLoading(true)}
+        onLoadEnd={() => setLoading(false)}
+      />
+      {loading && (
+        <ActivityIndicator size="large" style={StyleSheet.absoluteFill} />
+      )}
+    </View>
+  );
+}
 export default function PhotoList({ photos }) {
   const scrollX = useRef(new Animated.Value(0)).current;
   const urls = usePhotoCache({ photos });
-
+  console.log(urls);
   // dacă încă se încarcă
   if (urls === null) {
     return (
@@ -48,14 +63,14 @@ export default function PhotoList({ photos }) {
       <Animated.View
         style={[styles.card, { opacity }, { transform: [{ scale }] }]}
       >
-        <Image source={uri} style={{ width: ITEM_SIZE, height: ITEM_SIZE }} />
+        <ImageLoader uri={uri} />
       </Animated.View>
     );
   };
 
   return (
     <Animated.FlatList
-      style={{ width: CONTAINER_WIDTH - 10, backgroundColor: "red" }}
+      style={{ width: CONTAINER_WIDTH - 10 }}
       data={urls}
       horizontal
       showsHorizontalScrollIndicator={true}
