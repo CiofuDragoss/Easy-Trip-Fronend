@@ -7,7 +7,7 @@ import AnimatedLogo from "@/components/animatedSmallLogo";
 import { useNavigation } from "expo-router";
 import PlaceDisplayList from "@/components/placesDisplayList";
 import { SafeAreaView } from "react-native-safe-area-context";
-
+import Gradient from "@/components/Gradient";
 export default function Results() {
   const { SecondaryQuestions, MainQuestions } = useContext(QuestionsContext);
   const navigation = useNavigation();
@@ -74,17 +74,24 @@ export default function Results() {
         style3={{ right: -11, top: 9 }}
         size={15}
       />
-      <View style={styles.line}></View>
-
+      <Gradient style={styles.line} color={"#d1dbeb"} x={0.6} />
       <PlaceDisplayList results={responses} />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  header: {
+    width: "100%",
+    alignItems: "center",
+    borderBottomWidth: 1, // grosimea bordurii doar jos
+    borderBottomColor: "gray",
+    backgroundColor: "#556887",
+  },
   main: {
     flex: 1,
     alignItems: "center",
+    backgroundColor: "#e1f2f2",
   },
   container: {
     flex: 1,
@@ -92,11 +99,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   line: {
-    width: "20%",
-    height: 3,
-    backgroundColor: "grey",
+    width: "90%",
+    height: 2,
+    backgroundColor: "black",
     borderRadius: 10,
-    marginBottom: 15,
   },
   text: {
     fontSize: 25,

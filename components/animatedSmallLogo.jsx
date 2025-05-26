@@ -30,7 +30,6 @@ export default function AnimatedLogo({ style, style2, style3, size }) {
       color: colors.logo,
       fontFamily: "Poppins-Bold",
       fontSize: 55,
-      lineHeight: 63,
     },
     plane: {
       right: -17,
@@ -40,7 +39,6 @@ export default function AnimatedLogo({ style, style2, style3, size }) {
     logoContainer: {
       position: "relative",
       flexDirection: "row",
-
       alignItems: "center",
     },
   });
