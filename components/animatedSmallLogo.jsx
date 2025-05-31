@@ -25,24 +25,6 @@ export default function AnimatedLogo({ style, style2, style3, size }) {
     startAnimation();
   }, []);
 
-  const styles = StyleSheet.create({
-    logo: {
-      color: colors.logo,
-      fontFamily: "Poppins-Bold",
-      fontSize: 55,
-    },
-    plane: {
-      right: -17,
-      top: 5,
-      position: "absolute",
-    },
-    logoContainer: {
-      position: "relative",
-      flexDirection: "row",
-      alignItems: "center",
-    },
-  });
-
   return (
     <Pressable onPress={startAnimation}>
       <Animated.View
@@ -63,3 +45,19 @@ export default function AnimatedLogo({ style, style2, style3, size }) {
     </Pressable>
   );
 }
+
+const styles = StyleSheet.create({
+  logo: {
+    color: colors.logo,
+    fontFamily: "Poppins-Bold",
+    fontSize: 55,
+  },
+  plane: {
+    right: -17,
+    top: 5,
+    position: "absolute",
+  },
+  logoContainer: {
+    position: "relative",
+  },
+});

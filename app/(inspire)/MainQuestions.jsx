@@ -28,14 +28,13 @@ export default function MainQuestions() {
   const [selectedCategory, setSelectedCategory] = useState(2);
   const [selectedDistance, setSelectedDistance] = useState(3);
   const budgetRef = useRef(0);
-  const handicapRef = useRef(false);
+
   const handleSwipe = () => {
     setMainQuestions({
       region: location,
       category: categories[selectedCategory].title,
       distance: parseInt(distanta[selectedDistance].key),
       budget: budgetRef.current,
-      handicap: handicapRef.current,
     });
     console.log("before navigation, selectedCategory index:", selectedCategory);
     console.log(
@@ -57,24 +56,26 @@ export default function MainQuestions() {
         text={" Distanta maxima fata de locurile recomandate: "}
         repeat={false}
       />
-      <Text style={[styles.text, { color: "grey", fontSize: 11 }]}>
-        Gandeste-te daca doresti sa mergi pe jos sau esti dispus sa platesti un
-        taxi.
-      </Text>
 
       <SwipeListValue data={distanta} onSelectItem={setSelectedDistance} />
+      <View
+        style={{
+          alignItems: "center",
+          paddingHorizontal: 20,
+          paddingVertical: 10,
+        }}
+      >
+        <Text style={[styles.text, { color: "grey", fontSize: 14 }]}>
+          Gandeste-te daca doresti sa mergi pe jos sau esti dispus sa platesti
+          un taxi.
+        </Text>
+      </View>
       <Text style={styles.text}>Care este bugetul tau?</Text>
       <Slider
         labels={["$", "$$", "$$$"]}
         callback={(value) => (budgetRef.current = value)}
       />
-      <Text style={[styles.text, { marginTop: 35 }]}>
-        Ai nevoie de acces pentru scaunul cu rotile?
-      </Text>
-      <BorderButtonList
-        labels={["Da"]}
-        callback={(labels) => (handicapRef.current = labels.length > 0)}
-      />
+
       <GoButton
         key={selectedCategory}
         text={"continua"}
@@ -96,7 +97,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontFamily: "Poppins-Bold",
-    fontSize: 15,
+    fontSize: 20,
     textAlign: "center",
   },
 });

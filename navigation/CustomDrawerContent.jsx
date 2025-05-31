@@ -9,8 +9,7 @@ import { AuthContext } from "../context/AuthContext";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 export default function CustomDrawerContent(props) {
-  const { logOut, email, username } = useContext(AuthContext);
-  console.log("username", username);
+  const { logOut, username } = useContext(AuthContext);
   return (
     <DrawerContentScrollView
       {...props}

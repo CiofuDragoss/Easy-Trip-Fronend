@@ -16,7 +16,6 @@ export default function Results() {
   );
 
   useEffect(() => {
-    console.log("salut din resultss");
     if (!responses) {
       start();
     }
@@ -84,7 +83,7 @@ const styles = StyleSheet.create({
   header: {
     width: "100%",
     alignItems: "center",
-    borderBottomWidth: 1, // grosimea bordurii doar jos
+    borderBottomWidth: 1,
     borderBottomColor: "gray",
     backgroundColor: "#556887",
   },

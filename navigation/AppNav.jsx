@@ -11,7 +11,7 @@ export const AppNav = () => {
 
   if (isLoading) {
     return (
-      <View>
+      <View style={{ flex: 1 }}>
         <LoadingScreen />
       </View>
     );

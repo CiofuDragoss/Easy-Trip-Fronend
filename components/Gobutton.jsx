@@ -1,105 +1,89 @@
-import React, { useRef, useEffect } from "react";
-import { Animated, StyleSheet, PanResponder, View } from "react-native";
+import React from "react";
+import { StyleSheet, View, Text } from "react-native";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  interpolate,
+  runOnJS,
+  Extrapolation,
+} from "react-native-reanimated";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 
 const BUTTON_WIDTH = 80;
 const CONT_W = 230;
 
 export default function GoButton({ text, onSwipe }) {
-  const translateX = useRef(new Animated.Value(0)).current;
+  const translateX = useSharedValue(0);
 
-  const fillScaleX = translateX.interpolate({
-    inputRange: [0, CONT_W - BUTTON_WIDTH],
-    outputRange: [1, CONT_W / (BUTTON_WIDTH - 15)],
-    extrapolate: "clamp",
-  });
-
-  const textScale = translateX.interpolate({
-    inputRange: [0, CONT_W - BUTTON_WIDTH],
-    outputRange: [1, 17 / 13],
-    extrapolate: "clamp",
-  });
-
-  const textOpacity = translateX.interpolate({
-    inputRange: [0, CONT_W - BUTTON_WIDTH],
-    outputRange: [0.4, 0.7],
-    extrapolate: "clamp",
-  });
-
-  useEffect(() => {
-    Animated.sequence([
-      Animated.timing(translateX, {
-        toValue: -10,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-      Animated.spring(translateX, {
-        toValue: 0,
-        friction: 3,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, [translateX]);
-
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onStartShouldSetPanResponderCapture: () => true,
-      onMoveShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponderCapture: () => true,
-      onPanResponderMove: (e, gestureState) => {
-        const newX = Math.min(
-          Math.max(gestureState.dx, 0),
-          CONT_W - BUTTON_WIDTH
-        );
-        console.log(newX);
-        translateX.setValue(newX);
-      },
-      onPanResponderRelease: (e, gestureState) => {
-        if (gestureState.dx > CONT_W * 0.9) {
-          onSwipe?.();
-        }
-        Animated.spring(translateX, {
-          toValue: 0,
-          friction: 3,
-          useNativeDriver: true,
-          overshootClamping: true,
-        }).start();
-      },
+  const panGesture = Gesture.Pan()
+    .onUpdate((event) => {
+      translateX.value = Math.min(
+        Math.max(event.translationX, 0),
+        CONT_W - BUTTON_WIDTH
+      );
     })
-  ).current;
+    .onEnd((event) => {
+      if (event.translationX > (CONT_W - BUTTON_WIDTH) * 0.9) {
+        runOnJS(onSwipe)();
+      }
+
+      translateX.value = withSpring(0, { overshootClamping: true });
+    });
+
+  const fillStyle = useAnimatedStyle(() => {
+    const scale = interpolate(
+      translateX.value,
+      [0, CONT_W - BUTTON_WIDTH],
+      [1, CONT_W / (BUTTON_WIDTH - 15)],
+      Extrapolation.CLAMP
+    );
+    return {
+      transform: [
+        { translateX: -(BUTTON_WIDTH - 30) / 2 },
+        { scaleX: scale },
+        { translateX: (BUTTON_WIDTH - 30) / 2 },
+      ],
+    };
+  });
+
+  const buttonStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: translateX.value }],
+  }));
+
+  const textStyle = useAnimatedStyle(() => {
+    const scale = interpolate(
+      translateX.value,
+      [0, CONT_W - BUTTON_WIDTH],
+      [1, 1.3],
+      Extrapolation.CLAMP
+    );
+    const opacity = interpolate(
+      translateX.value,
+      [0, CONT_W - BUTTON_WIDTH],
+      [0.8, 0],
+      Extrapolation.CLAMP
+    );
+    return {
+      transform: [{ scale }],
+      opacity,
+    };
+  });
 
   return (
     <View style={styles.sliderContainer}>
-      <Animated.View
-        style={[
-          styles.fill,
-          {
-            transform: [
-              { translateX: -(BUTTON_WIDTH - 30) / 2 },
-              { scaleX: fillScaleX },
-              { translateX: (BUTTON_WIDTH - 30) / 2 },
-            ],
-          },
-        ]}
-      />
-      <Animated.View
-        style={[styles.goButton, { transform: [{ translateX: translateX }] }]}
-        hitSlop={{ top: 100, bottom: 100, left: 100, right: 200 }}
-        {...panResponder.panHandlers}
-      >
-        <Animated.Text
-          style={[
-            styles.goText,
-            {
-              opacity: textOpacity,
-              transform: [{ scale: textScale }],
-              pointerEvents: "none",
-            },
-          ]}
+      <Animated.View style={[styles.fill, fillStyle]} />
+      <GestureDetector gesture={panGesture}>
+        <Animated.View
+          style={[styles.goButton, buttonStyle]}
+          hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
         >
-          {text}
-        </Animated.Text>
-      </Animated.View>
+          <Animated.Text style={[styles.goText, textStyle]}>
+            {" "}
+            {text}{" "}
+          </Animated.Text>
+        </Animated.View>
+      </GestureDetector>
     </View>
   );
 }
@@ -112,7 +96,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     justifyContent: "center",
     overflow: "hidden",
-    marginTop: 20,
+    marginTop: 40,
   },
   goButton: {
     width: BUTTON_WIDTH,
@@ -124,7 +108,7 @@ const styles = StyleSheet.create({
   },
   goText: {
     color: "black",
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: "bold",
     textAlign: "center",
   },

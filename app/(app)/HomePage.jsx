@@ -4,13 +4,6 @@ import colors from "@/constants/colors";
 import AnimatedLogo from "@/components/animatedSmallLogo";
 import MenuButton from "@/components/MenuPressable";
 import { useNavigation } from "@react-navigation/native";
-import {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-} from "react-native-reanimated";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
-
 export default function HomePage() {
   const navigation = useNavigation();
   const [rowWidth, setRowWidth] = useState(0);
@@ -40,7 +33,7 @@ export default function HomePage() {
             setLogoWidth(e.nativeEvent.layout.width);
           }}
         >
-          <AnimatedLogo />
+          <AnimatedLogo style3={{ top: 18, right: -12 }} />
         </View>
       </View>
       <View style={styles.MainContent}>
@@ -48,7 +41,12 @@ export default function HomePage() {
 
         <Pressable
           style={styles.InspireButton}
-          onPress={() => navigation.navigate("Inspira-ma")}
+          onPress={
+            () =>
+              navigation
+                .getParent() // urcă un nivel, la NativeStack-ul părinte
+                .navigate("InspireQuestionsStack") // numele ecranului din stack
+          }
         >
           <Text style={styles.title}>Inspira-ma</Text>
         </Pressable>
@@ -74,6 +72,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     backgroundColor: colors.background,
+    position: "relative",
   },
   title: {
     fontFamily: "Poppins-Bold",

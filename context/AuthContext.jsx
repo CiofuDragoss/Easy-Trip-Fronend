@@ -1,4 +1,4 @@
-import React, { Children, createContext, useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import routes from "@/constants/routes";
 import * as SecureStore from "expo-secure-store";
 
@@ -131,6 +131,7 @@ export const AuthProvider = ({ children }) => {
         setPanel,
         email,
         username,
+        setUserToken,
       }}
     >
       {children}

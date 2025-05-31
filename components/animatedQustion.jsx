@@ -34,7 +34,7 @@ export default function AnimatedQuestion({ text, repeat }) {
             {
               paddingLeft: repeat ? 30 : 5,
               paddingRight: repeat ? 30 : 5,
-              fontSize: repeat ? 30 : 14,
+              fontSize: repeat ? 30 : 20,
             },
           ]}
         >
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     paddingLeft: 30,
     paddingRight: 30,
     fontFamily: "Poppins-Bold",
-    fontSize: 35,
+    fontSize: 40,
     color: "black",
     textAlign: "center",
   },

@@ -26,7 +26,11 @@ const QuestionsStack = () => {
         <Stack.Screen name="Experiente" component={ExperiencesQuestions} />
         <Stack.Screen name="Shopping" component={ShoppingQuestions} />
         <Stack.Screen name="Mancare & Bauturi" component={FoodQuestions} />
-        <Stack.Screen name="Results" component={Results} />
+        <Stack.Screen
+          name="Results"
+          options={{ unmountOnBlur: true }}
+          component={Results}
+        />
       </Stack.Navigator>
     </QuestionProvider>
   );

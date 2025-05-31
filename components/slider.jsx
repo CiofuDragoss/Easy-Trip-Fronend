@@ -5,7 +5,11 @@ import Animated, {
   useDerivedValue,
   runOnJS,
 } from "react-native-reanimated";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import {
+  Gesture,
+  GestureDetector,
+  GestureHandlerRootView,
+} from "react-native-gesture-handler";
 import { Text, View, StyleSheet, Dimensions } from "react-native";
 
 const { width } = Dimensions.get("window");
@@ -32,7 +36,6 @@ export default function Slider({ labels, text, callback }) {
       );
     })
     .onEnd(() => {
-      console.log("intaine sa trimitem avem: sliderValue", sliderValue.value);
       if (callback) runOnJS(callback)(sliderValue.value);
 
       translateX.value = withSpring(translateX.value);

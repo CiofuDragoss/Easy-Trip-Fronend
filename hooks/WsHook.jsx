@@ -52,7 +52,6 @@ export function useRecommendWs({ MainQuestions, SecondaryQuestions }) {
         try {
           const data = JSON.parse(mes.data);
           if (data.data) {
-            console.log("am ajuns aiiciii boss");
             setResponses(data);
             stop();
           }

@@ -29,6 +29,9 @@ export default function OpeningHours({
 
   const formatted = useMemo(() => {
     const periods = openingHours.periods || [];
+    if (periods.length === 1) {
+      return ["Luni-Duminica: NON-STOP"];
+    }
     const dayOrder = [1, 2, 3, 4, 5, 6, 0];
     const days = dayOrder.map((day) => {
       const dayPeriods = periods.filter((p) => p.open.day == day);

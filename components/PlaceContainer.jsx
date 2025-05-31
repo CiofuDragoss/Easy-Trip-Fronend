@@ -1,4 +1,12 @@
-import { View, Text, StyleSheet, Pressable, Linking } from "react-native";
+import { useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  Linking,
+  Modal,
+} from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Gradient from "./Gradient";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
@@ -7,7 +15,9 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import OpeningHours from "@/components/OpeningHours";
 import AnimatedLogo from "@/components/animatedSmallLogo";
 import CleanButton from "@/components/CleanButton";
+import ModalReviews from "./ModalReviews";
 export default function PlaceContainer({ place }) {
+  const [showReviews, setShowReviews] = useState(false);
   const {
     display,
     photos,
@@ -18,6 +28,7 @@ export default function PlaceContainer({ place }) {
     placeId,
     latitude,
     longitude,
+    reviews,
   } = place;
   return (
     <Gradient style={styles.container} color={"#d1dbeb"} x={0.7}>
@@ -87,10 +98,26 @@ export default function PlaceContainer({ place }) {
         />
         <Text style={styles.text}>mapView</Text>
         <CleanButton
+          text={"maps"}
           onPress={() => {
             const url = `https://www.google.com/maps/search/?api=1&query=${display}&query_place_id=${placeId.trim()}`;
             console.log(placeId);
             Linking.openURL(url);
+          }}
+        />
+      </View>
+      <View style={styles.row}>
+        <AnimatedLogo
+          style={{ marginHorizontal: 2 }}
+          style2={{ fontSize: 24 }}
+          style3={{ right: -8, top: 9 }}
+          size={10}
+        />
+        <Text style={styles.text}>reviews</Text>
+        <CleanButton
+          text={"reviews"}
+          onPress={() => {
+            setShowReviews(true);
           }}
         />
       </View>
@@ -138,6 +165,14 @@ export default function PlaceContainer({ place }) {
           ]}
         />
       </View>
+      <ModalReviews
+        reviews={reviews}
+        visible={showReviews}
+        onClose={() => {
+          setShowReviews(false);
+          console.log("am apasat");
+        }}
+      />
     </Gradient>
   );
 }

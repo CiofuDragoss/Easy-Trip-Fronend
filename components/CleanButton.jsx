@@ -11,7 +11,7 @@ import Animated, {
 } from "react-native-reanimated";
 const AnimatedAnt = Animated.createAnimatedComponent(AntDesign);
 
-export default function CleanButton({ onPress, style }) {
+export default function CleanButton({ onPress, style, text }) {
   const progress = useSharedValue(0);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export default function CleanButton({ onPress, style }) {
   }, []);
 
   const animatedG = useAnimatedStyle(() => ({
-    color: interpolateColor(progress.value, [0, 1], ["#007BFF", "#002fff"]),
+    color: interpolateColor(progress.value, [0, 1], ["#007BFF", "#1f2c4d"]),
   }));
 
   return (
@@ -33,7 +33,7 @@ export default function CleanButton({ onPress, style }) {
     >
       <Gradient style={styles.button} color={"white"} x={0.9}>
         <AnimatedAnt name="google" size={17} style={animatedG} />
-        <Animated.Text style={[styles.text, animatedG]}>maps</Animated.Text>
+        <Animated.Text style={[styles.text, animatedG]}>{text}</Animated.Text>
       </Gradient>
     </Pressable>
   );

@@ -20,20 +20,6 @@ export default function QuestionsProvider({ children }) {
   const [NightLifeQuestions, setNightLifeQuestions] = useState({});
   const [SecondaryQuestions, setSecondaryQuestions] = useState({});
 
-  console.log(
-    "MainQuestions",
-    MainQuestions,
-    "HistoryQuestions",
-    HistoryQuestions,
-    "ExperienceQuestions",
-    ExperienceQuestions,
-    "FoodQuestions",
-    FoodQuestions,
-    "DrinksQuestions",
-    DrinksQuestions,
-    "NightLifeQuestions",
-    NightLifeQuestions
-  );
   return (
     <QuestionsContext.Provider
       value={{

@@ -32,8 +32,6 @@ function ImageLoader({ uri }) {
 export default function PhotoList({ photos }) {
   const scrollX = useRef(new Animated.Value(0)).current;
   const urls = usePhotoCache({ photos });
-  console.log(urls);
-  // dacă încă se încarcă
   if (urls === null) {
     return (
       <View style={styles.loadingContainer}>

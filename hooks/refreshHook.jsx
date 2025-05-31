@@ -7,6 +7,7 @@ export function useApiWithRefresh() {
   const { logOut, setUserToken, userToken } = useContext(AuthContext);
   const startWRefresh = useCallback(
     async (apiFunc, ...args) => {
+      console.log("salutt");
       let response = await apiFunc(userToken, ...args);
       if (response.status === 401 || response.status === 403) {
         try {
@@ -24,6 +25,8 @@ export function useApiWithRefresh() {
           setUserToken(access_token);
           response = await apiFunc(access_token, ...args);
         } catch (error) {
+          console.log("am eroare");
+          console.log("eroare:", error.message);
           logOut();
           throw error;
         }

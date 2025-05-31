@@ -33,7 +33,6 @@ export default function LocationProvider({ children }) {
     if (token && !placeId && !preciseLocationGranted) {
       const fetchLocation = async () => {
         try {
-          console.log("sal");
           const loc = await startWRefresh(getIpLoc);
           const loc_json = await loc.json();
           console.log(
@@ -51,7 +50,6 @@ export default function LocationProvider({ children }) {
 
   useEffect(() => {
     const fetchPlaceId = async () => {
-      console.log("place iddd:", placeId);
       if (token && placeId && !preciseLocationGranted) {
         try {
           const loc = await startWRefresh(getPlaceGeoLoc, placeId);

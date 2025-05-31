@@ -3,9 +3,9 @@ import { Animated, Text, StyleSheet, Pressable } from "react-native";
 import colors from "../constants/colors";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 
-export default function AnimatedLogo({ style }) {
+export default function AnimatedLogo({ style, plane }) {
   const translateY = useRef(new Animated.Value(0)).current;
-
+  console.log("hello");
   const startAnimation = () => {
     Animated.sequence([
       Animated.timing(translateY, {
@@ -25,27 +25,6 @@ export default function AnimatedLogo({ style }) {
     startAnimation();
   }, []);
 
-  const styles = StyleSheet.create({
-    logo: {
-      color: colors.logo,
-      fontFamily: "Poppins-Bold",
-      fontSize: 65,
-    },
-    plane: {
-      position: "absolute",
-      height: "60%",
-
-      right: "-5%",
-    },
-    logoContainer: {
-      position: "relative",
-      flexDirection: "row",
-
-      marginTop: "30%",
-      alignItems: "center",
-    },
-  });
-
   return (
     <Pressable onPress={startAnimation}>
       <Animated.View
@@ -60,9 +39,29 @@ export default function AnimatedLogo({ style }) {
           name="plane"
           size={22}
           color={colors.logo_icon}
-          style={styles.plane}
+          style={[styles.plane, { plane }]}
         />
       </Animated.View>
     </Pressable>
   );
 }
+const styles = StyleSheet.create({
+  logo: {
+    color: colors.logo,
+    fontFamily: "Poppins-Bold",
+    fontSize: 65,
+  },
+  plane: {
+    position: "absolute",
+    height: "60%",
+
+    right: "-5%",
+  },
+  logoContainer: {
+    position: "relative",
+    flexDirection: "row",
+
+    marginTop: "30%",
+    alignItems: "center",
+  },
+});

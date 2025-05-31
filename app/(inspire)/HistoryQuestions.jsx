@@ -10,7 +10,7 @@ import { useNavigation } from "expo-router";
 
 export default function HistoryQuestions() {
   const navigation = useNavigation();
-  const { setHistoryQuestions } = useContext(QuestionsContext);
+  const { setSecondaryQuestions, MainQuestions } = useContext(QuestionsContext);
   const [error, setError] = useState(false);
   const historyQuestions = useRef({
     experienceType: 0,
@@ -33,7 +33,8 @@ export default function HistoryQuestions() {
       return;
     }
     setError(false);
-    setHistoryQuestions(historyQuestions.current);
+    setSecondaryQuestions(historyQuestions.current);
+    navigation.replace("Results");
   };
   return (
     <View style={styles.main}>
