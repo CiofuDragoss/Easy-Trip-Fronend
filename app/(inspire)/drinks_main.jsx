@@ -55,7 +55,7 @@ export default function DrinksQuestions() {
         callback={(labels) => (DrinksQuestions.current.groupType = labels[0])}
       />
 
-      <Text style={styles.text}>Ce bauturi doresti să savurezi?</Text>
+      <Text style={styles.text}>Ce doresti să savurezi?</Text>
       <BorderButtonList
         labels={[
           "Cafea",
@@ -63,7 +63,8 @@ export default function DrinksQuestions() {
           "Vin",
           "Cocktailuri",
           "Ceai",
-          "Smoothies",
+          "Desert",
+          "Inghetata",
           "Sucuri de fructe",
           "Nu conteaza",
         ]}
@@ -78,8 +79,7 @@ export default function DrinksQuestions() {
           "Bar",
           "Ceainarie",
           "Pub",
-          "Lounge",
-          "Smoothies bar",
+          "Vinarie",
           "Nu conteaza",
         ]}
         WIDTH={"90%"}
@@ -90,14 +90,7 @@ export default function DrinksQuestions() {
         Ce caracteristici ai dori sa aiba locatiile?
       </Text>
       <BorderButtonList
-        labels={[
-          "Cozy",
-          "Vegan",
-          "Sanatos",
-          "Traditional",
-          "Modern",
-          "Nu conteaza",
-        ]}
+        labels={["Optiuni Vegane", "Inedit", "Nu conteaza"]}
         WIDTH={"90%"}
         callback={(labels) =>
           (DrinksQuestions.current.locationFeatures = labels)

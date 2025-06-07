@@ -63,8 +63,6 @@ export default function StartInspiration() {
             navigation.navigate("MainQuestions");
           }}
         />
-
-        <GoButton text={"logout"} onSwipe={logOut} />
       </View>
     </SafeAreaView>
   );

@@ -4,7 +4,8 @@ import React from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AuthProvider } from "../context/AuthContext";
 import { AppNav } from "../navigation/AppNav";
-
+import { View } from "react-native";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 const Stack = createNativeStackNavigator();
 
 export default function RootLayout() {

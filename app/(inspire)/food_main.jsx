@@ -16,7 +16,7 @@ export default function ExperiencesQuestions() {
     mealType: 0,
     locationType: 0,
     veganOptions: 0,
-    ambiance: 0,
+    fineDining: 0,
   });
 
   const handleContinue = () => {
@@ -62,11 +62,7 @@ export default function ExperiencesQuestions() {
           (FoodQuestions.current.veganOptions = labels.length > 0 ? 1 : 0)
         }
       />
-      <Text style={styles.text}>Ce tip de ambianta preferi la restaurant?</Text>
-      <Slider
-        labels={["casual", "sofisticata"]}
-        callback={(value) => (FoodQuestions.current.ambiance = value)}
-      />
+
       <View style={{ marginTop: 20 }}>
         <GoButton text={"continua"} onSwipe={handleContinue} />
       </View>

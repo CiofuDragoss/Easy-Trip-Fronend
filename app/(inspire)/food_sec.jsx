@@ -30,17 +30,18 @@ export default function ExperiencesQuestions() {
     <View style={styles.main}>
       <AnimatedLogo />
       <View style={styles.line} />
-      <Text style={styles.text}>Preferati un anumit tip de bucatarie?</Text>
+      <Text style={styles.text}>
+        Preferati un anumit tip de bucatarie sau mancare in special?
+      </Text>
       <BorderButtonList
         labels={[
           "Italiana",
-          "Chinezeasca",
+          "Asiatica",
           "Mexicana",
           "Indiana",
           "Mediteraneana",
           "Locala & Traditionala",
           "Franceza",
-          "Thailandeza",
           "Japoneza",
           "Turceasca",
           "Americana",

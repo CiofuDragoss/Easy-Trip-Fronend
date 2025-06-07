@@ -107,6 +107,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontFamily: "Poppins-Bold",
     marginVertical: 2,
+    textAlign: "center",
   },
   cancelButton: {
     backgroundColor: "red",

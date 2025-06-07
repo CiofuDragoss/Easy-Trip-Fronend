@@ -14,7 +14,6 @@ export default function HistoryQuestions() {
   const [error, setError] = useState(false);
   const historyQuestions = useRef({
     experienceType: 0,
-    artType: 0,
     locationTypes: null,
   });
 
@@ -38,7 +37,7 @@ export default function HistoryQuestions() {
   };
   return (
     <View style={styles.main}>
-      <AnimatedLogo />
+      <AnimatedLogo size={22} style3={{ top: 15, right: -13 }} />
       <View style={styles.info}>
         <AntDesign name="questioncircleo" size={24} color="black" />
         <View style={styles.line} />
@@ -54,24 +53,12 @@ export default function HistoryQuestions() {
         labels={["Istorica & Arhitecturala", "Artistică & vizuală"]}
         callback={(value) => (historyQuestions.current.experienceType = value)}
       />
-      <Text style={[styles.text, { marginTop: 55 }]}>
-        Ce tip de arta preferi?
-      </Text>
-      <Slider
-        labels={["Populara", "Clasica", "Moderna"]}
-        callback={(value) => (historyQuestions.current.artType = value)}
-      />
-      <Text style={[styles.text, { marginTop: 55 }]}>
+
+      <Text style={[styles.text, { marginTop: 55, marginBottom: 10 }]}>
         Ce te atrage în special?
       </Text>
       <BorderButtonList
-        labels={[
-          "Muzee",
-          "Expozitii",
-          "Galerii de arta",
-          "Monumente",
-          "Arhitectura",
-        ]}
+        labels={["Muzee", "Galerii de arta", "Monumente", "Arhitectura"]}
         WIDTH={"90%"}
         callback={(labels) => (historyQuestions.current.locationTypes = labels)}
       />
@@ -119,6 +106,5 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Bold",
     fontSize: 18,
     textAlign: "center",
-    lineHeight: 20,
   },
 });

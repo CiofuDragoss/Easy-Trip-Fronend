@@ -8,9 +8,10 @@ import GoButton from "@/components/Gobutton";
 import AnimatedLogo from "@/components/animatedSmallLogo";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import NightLifeQuestions from "./NightLifeQuestions_1";
-
+import { useNavigation } from "expo-router";
 export default function ExperiencesQuestions() {
-  const { setExperienceQuestions } = useContext(QuestionsContext);
+  const { setSecondaryQuestions } = useContext(QuestionsContext);
+  const navigation = useNavigation();
   const [error, setError] = useState(false);
   const ExperienceQuestions = useRef({
     adrenaline: null,
@@ -30,7 +31,8 @@ export default function ExperiencesQuestions() {
       return;
     }
     setError(false);
-    setExperienceQuestions(ExperienceQuestions.current);
+    setSecondaryQuestions(ExperienceQuestions.current);
+    navigation.replace("Results");
   };
   return (
     <View style={styles.main}>

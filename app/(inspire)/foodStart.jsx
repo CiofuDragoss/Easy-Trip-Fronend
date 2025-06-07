@@ -30,7 +30,7 @@ export default function ExperiencesQuestions() {
         </Text>
       </View>
       <BorderButtonList
-        labels={["Mancare", "Bauturi"]}
+        labels={["Mancare", "Bauturi & Deserturi"]}
         WIDTH={"80%"}
         oneOption={true}
         callback={handleOptionChange}
@@ -38,7 +38,11 @@ export default function ExperiencesQuestions() {
       <GoButton
         key={option}
         text={"continua"}
-        onSwipe={() => navigation.navigate(option)}
+        onSwipe={() =>
+          option === "Mancare"
+            ? navigation.navigate(option)
+            : navigation.navigate("Bauturi")
+        }
       />
     </View>
   );

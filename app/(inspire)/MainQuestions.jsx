@@ -94,6 +94,7 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     alignItems: "center",
+    justifyContent: "center",
   },
   text: {
     fontFamily: "Poppins-Bold",
