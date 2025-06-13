@@ -10,7 +10,7 @@ import { useNavigation } from "expo-router";
 
 export default function HistoryQuestions() {
   const navigation = useNavigation();
-  const { setSecondaryQuestions, MainQuestions } = useContext(QuestionsContext);
+  const { setSecondaryQuestions } = useContext(QuestionsContext);
   const [error, setError] = useState(false);
   const historyQuestions = useRef({
     experienceType: 0,

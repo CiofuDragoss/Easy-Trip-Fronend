@@ -20,11 +20,10 @@ const swipeListData = (() => {
 })();
 
 export default function NightLifeQuestions() {
-  const { setNightLifeQuestions } = useContext(QuestionsContext);
+  const { setSecondaryQuestions } = useContext(QuestionsContext);
   const NightLifeQuestions = useRef({
     date: new Date().toString(),
     duration: 4,
-    groupType: null,
   });
   const [error, setError] = useState(false);
   const navigation = useNavigation();
@@ -43,7 +42,7 @@ export default function NightLifeQuestions() {
       return;
     }
     setError(false);
-    setNightLifeQuestions(NightLifeQuestions.current);
+    setSecondaryQuestions(NightLifeQuestions.current);
     navigation.navigate("NightLife_sec");
   };
   const onChange = (event, selectedDate) => {
@@ -74,9 +73,7 @@ export default function NightLifeQuestions() {
           memorabila.
         </Text>
       </View>
-      <Text style={styles.text}>
-        La ce ora doresti să iti începi seara și cam cat sa dureze?
-      </Text>
+      <Text style={styles.text}>La ce ora doresti să iti începi seara?</Text>
       <Pressable onPress={() => setShow(true)} style={styles.button}>
         <AntDesign name="clockcircle" size={30} color="black" />
         <Text style={styles.infoText}>ora</Text>
@@ -93,31 +90,32 @@ export default function NightLifeQuestions() {
       {showDate ? (
         <Text style={[styles.infoText, { marginTop: 20 }]}>
           Ai selectat ora{" "}
-          {`${date.getHours()}:${
-            date.getMinutes().length == 1
-              ? "0" + date.getMinutes()
-              : date.getMinutes()
+          {`${date.getHours() < 10 ? "0" + date.getHours() : date.getHours()}:${
+            date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()
           }`}
         </Text>
       ) : (
         <Text style={[styles.infoText, { marginTop: 20 }]}>{""}</Text>
       )}
-      <Text style={styles.text}>Cat timp doresti sa stai?</Text>
+      <Text style={[styles.text, { margin: 0, marginTop: 15 }]}>
+        Cat timp doresti sa stai aproximativ?
+      </Text>
+      <Text
+        style={[
+          styles.text,
+          { margin: 0, marginBottom: 10, fontSize: 14, color: "grey" },
+        ]}
+      >
+        Sfat: selecteaza durata maxima pe care doresti sa o petreci in oras,
+        pentru a putea oferi locatii deschise suficient de mult timp.
+      </Text>
       <SwipeListValue
         data={swipeListData}
         onSelectItem={(index) =>
           (NightLifeQuestions.current.duration = swipeListData[index].key)
         }
       />
-      <Text style={styles.text}>Solo sau in grup?</Text>
-      <BorderButtonList
-        labels={["Solo", "Cuplu", "Grup"]}
-        oneOption={true}
-        WIDTH={"55%"}
-        callback={(labels) =>
-          (NightLifeQuestions.current.groupType = labels[0])
-        }
-      />
+
       <GoButton text={"continua"} onSwipe={handleContinue} />
       {error && (
         <Text style={[styles.infoText, { color: "red", marginTop: 20 }]}>

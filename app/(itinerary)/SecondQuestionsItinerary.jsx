@@ -7,17 +7,19 @@ import { QuestionsContext } from "@/context/QuestionsContext";
 import GoButton from "@/components/Gobutton";
 import AnimatedLogo from "@/components/animatedSmallLogo";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { useLocation } from "@/context/LocationContext";
 import { useNavigation } from "expo-router";
-export default function NightLifeQuestions() {
+export default function SecondaryQuestionsItinerary() {
+  const { location } = useLocation();
   const { setSecondaryQuestions } = useContext(QuestionsContext);
   const [error, setError] = useState(false);
-  const NightLifeQuestions = useRef({
-    atmosphere: 0,
-    locationTypes: null,
+
+  const ItineraryQuestions = useRef({
+    intensity: 0,
   });
   const navigation = useNavigation();
   const handleContinue = () => {
-    const allAnswers = Object.values(NightLifeQuestions.current).every(
+    const allAnswers = Object.values(ItineraryQuestions.current).every(
       (item) => {
         if (Array.isArray(item)) {
           return item.length > 0;
@@ -32,29 +34,22 @@ export default function NightLifeQuestions() {
       return;
     }
     setError(false);
+
     setSecondaryQuestions((prev) => ({
       ...prev,
-      ...NightLifeQuestions.current,
+      ...ItineraryQuestions.current,
     }));
-    navigation.replace("Results");
+    console.log("astea sunt sec questions: ", ItineraryQuestions.current);
+    navigation.navigate("HowMyDay");
   };
   return (
     <View style={styles.main}>
       <AnimatedLogo />
-
       <View style={styles.line} />
 
-      <Text style={styles.text}>
-        Doresti o atmosfera linistita sau muzica la maxim si vibe de party?
-      </Text>
-      <Slider
-        labels={["linistita", "muzica pana dimineata"]}
-        callback={(value) => {
-          NightLifeQuestions.current.atmosphere = value;
-        }}
-      />
-      <Text style={[styles.text, { margin: 0, marginTop: 45 }]}>
-        Preferi anumite tipuri de locatii?
+      <Text style={[styles.text, { margin: 0, marginTop: 15 }]}>
+        Doriti sa explorati intr-un ritm lejer sau sa bifati cat mai multe
+        obiective?
       </Text>
       <Text
         style={[
@@ -62,15 +57,12 @@ export default function NightLifeQuestions() {
           { margin: 0, marginBottom: 10, fontSize: 14, color: "grey" },
         ]}
       >
-        Sfat: Selecteaza locatii relevante pentru tipul de atmosfera pe care o
-        doresti.
+        Sfat: Daca doriti mai multe activitati si obiective intre mese,
+        selectati corespunzator.
       </Text>
-      <BorderButtonList
-        labels={["Karaoke", "Pub", "Lounge", "Bar de noapte", "Club de Noapte"]}
-        WIDTH={"90%"}
-        callback={(labels) => {
-          NightLifeQuestions.current.locationTypes = labels;
-        }}
+      <Slider
+        labels={["lejer", "cat mai multe obiective"]}
+        callback={(value) => (ItineraryQuestions.current.intensity = value)}
       />
 
       <GoButton text={"continua"} onSwipe={handleContinue} />
@@ -87,14 +79,6 @@ export default function NightLifeQuestions() {
 }
 
 const styles = StyleSheet.create({
-  line: {
-    borderBottomColor: "gray",
-    width: "30%",
-    marginTop: 10,
-    marginBottom: 5,
-    borderBottomWidth: 1,
-    marginVertical: 2,
-  },
   info: {
     width: "70%",
     height: "22%",
@@ -102,6 +86,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#4dc2c2",
     padding: 10,
     alignItems: "center",
+  },
+  line: {
+    borderBottomColor: "gray",
+    width: "30%",
+    marginTop: 10,
+    marginBottom: 5,
+    borderBottomWidth: 1,
+    marginVertical: 2,
   },
   infoText: {
     fontFamily: "Poppins-Medium",

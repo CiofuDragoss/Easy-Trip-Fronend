@@ -7,12 +7,14 @@ import { QuestionsContext } from "@/context/QuestionsContext";
 import GoButton from "@/components/Gobutton";
 import AnimatedLogo from "@/components/animatedSmallLogo";
 import AntDesign from "@expo/vector-icons/AntDesign";
-
-export default function ExperiencesQuestions() {
-  const { setFoodQuestions } = useContext(QuestionsContext);
+import { useNavigation } from "expo-router";
+export default function FoodQuestions() {
+  const { setSecondaryQuestions, setMainQuestions } =
+    useContext(QuestionsContext);
   const FoodQuestions = useRef({
     foodTypes: null,
   });
+  const navigation = useNavigation();
   const [error, setError] = useState(false);
   const handleContinue = () => {
     const allAnsweared = Object.values(FoodQuestions.current).every((item) => {
@@ -24,7 +26,9 @@ export default function ExperiencesQuestions() {
       return;
     }
     setError(false);
-    setFoodQuestions((prev) => ({ ...prev, ...FoodQuestions.current }));
+    setMainQuestions((prev) => ({ ...prev, category: "Mancare" }));
+    setSecondaryQuestions((prev) => ({ ...prev, ...FoodQuestions.current }));
+    navigation.replace("Results");
   };
   return (
     <View style={styles.main}>
@@ -35,18 +39,21 @@ export default function ExperiencesQuestions() {
       </Text>
       <BorderButtonList
         labels={[
-          "Italiana",
           "Asiatica",
+          "Japoneza",
+          "Franceza",
           "Mexicana",
+          "Tailandeza",
+          "Indoneziana",
           "Indiana",
           "Mediteraneana",
+          "Africana",
           "Locala & Traditionala",
-          "Franceza",
-          "Japoneza",
           "Turceasca",
           "Americana",
-          "Libaneza",
-          "Nu Conteaza",
+          "din Orientul Mijlociu",
+          "Italiana",
+          "Surprinde-ma",
         ]}
         WIDTH={"90%"}
         callback={(labels) => {

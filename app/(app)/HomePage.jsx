@@ -54,6 +54,12 @@ export default function HomePage() {
           >
             <Text style={styles.title}>Inspira-ma</Text>
           </Pressable>
+          <Pressable
+            style={styles.InspireButton}
+            onPress={() => navigation.getParent().navigate("ItineraryStack")}
+          >
+            <Text style={styles.title}>Planifica ziua</Text>
+          </Pressable>
           <Text style={styles.title}>Recomandarile tale anterioare</Text>
           <View style={styles.line} />
         </View>
@@ -82,6 +88,7 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: "Poppins-Bold",
     fontSize: 20,
+    textAlign: "center",
   },
   MainContent: {
     height: "100%",

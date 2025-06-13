@@ -7,17 +7,21 @@ import { QuestionsContext } from "@/context/QuestionsContext";
 import GoButton from "@/components/Gobutton";
 import AnimatedLogo from "@/components/animatedSmallLogo";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { useLocation } from "@/context/LocationContext";
 import { useNavigation } from "expo-router";
-export default function NightLifeQuestions() {
+export default function SecondaryQuestionsItinerary() {
+  const { location } = useLocation();
   const { setSecondaryQuestions } = useContext(QuestionsContext);
   const [error, setError] = useState(false);
-  const NightLifeQuestions = useRef({
-    atmosphere: 0,
-    locationTypes: null,
+
+  const ItineraryQuestions = useRef({
+    typeOfActivity: 0,
+    typeCultural: 0,
+    intesityActivities: 0,
   });
   const navigation = useNavigation();
   const handleContinue = () => {
-    const allAnswers = Object.values(NightLifeQuestions.current).every(
+    const allAnswers = Object.values(ItineraryQuestions.current).every(
       (item) => {
         if (Array.isArray(item)) {
           return item.length > 0;
@@ -32,47 +36,45 @@ export default function NightLifeQuestions() {
       return;
     }
     setError(false);
+
     setSecondaryQuestions((prev) => ({
       ...prev,
-      ...NightLifeQuestions.current,
+      ...ItineraryQuestions.current,
     }));
-    navigation.replace("Results");
+    console.log("astea sunt sec questions: ", ItineraryQuestions.current);
+    navigation.navigate("HowMyDay2");
   };
   return (
     <View style={styles.main}>
       <AnimatedLogo />
 
-      <View style={styles.line} />
-
-      <Text style={styles.text}>
-        Doresti o atmosfera linistita sau muzica la maxim si vibe de party?
+      <Text style={[styles.text, { margin: 0, marginTop: 10, fontSize: 21 }]}>
+        Cum doriti sa arate ziua dumneavoastra?
+      </Text>
+      <View style={[styles.line, { borderBottomWidth: 2 }]} />
+      <Slider
+        labels={["obiective diverse si activitati", "obiective culturale"]}
+        callback={(value) =>
+          (ItineraryQuestions.current.typeOfActivity = value)
+        }
+      />
+      <Text style={[styles.text, { margin: 0, marginTop: 60, fontSize: 18 }]}>
+        Pentru obiective culturale, ce tip preferati?
       </Text>
       <Slider
-        labels={["linistita", "muzica pana dimineata"]}
-        callback={(value) => {
-          NightLifeQuestions.current.atmosphere = value;
-        }}
+        labels={["istorie", "arta si frumos"]}
+        callback={(value) => (ItineraryQuestions.current.typeCultural = value)}
       />
-      <Text style={[styles.text, { margin: 0, marginTop: 45 }]}>
-        Preferi anumite tipuri de locatii?
+      <Text style={[styles.text, { margin: 0, marginTop: 60, fontSize: 18 }]}>
+        Pentru activitati si experiente, ce intensitate fizica preferati?
       </Text>
-      <Text
-        style={[
-          styles.text,
-          { margin: 0, marginBottom: 10, fontSize: 14, color: "grey" },
-        ]}
-      >
-        Sfat: Selecteaza locatii relevante pentru tipul de atmosfera pe care o
-        doresti.
-      </Text>
-      <BorderButtonList
-        labels={["Karaoke", "Pub", "Lounge", "Bar de noapte", "Club de Noapte"]}
-        WIDTH={"90%"}
-        callback={(labels) => {
-          NightLifeQuestions.current.locationTypes = labels;
-        }}
+      <Slider
+        labels={["usor", "intens"]}
+        callback={(value) =>
+          (ItineraryQuestions.current.intesityActivities = value)
+        }
       />
-
+      <View style={[styles.line, { borderBottomWidth: 2, marginTop: 70 }]} />
       <GoButton text={"continua"} onSwipe={handleContinue} />
 
       {error ? (
@@ -87,14 +89,6 @@ export default function NightLifeQuestions() {
 }
 
 const styles = StyleSheet.create({
-  line: {
-    borderBottomColor: "gray",
-    width: "30%",
-    marginTop: 10,
-    marginBottom: 5,
-    borderBottomWidth: 1,
-    marginVertical: 2,
-  },
   info: {
     width: "70%",
     height: "22%",
@@ -102,6 +96,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#4dc2c2",
     padding: 10,
     alignItems: "center",
+  },
+  line: {
+    borderBottomColor: "gray",
+    width: "30%",
+    marginTop: 15,
+    marginBottom: 5,
+    borderBottomWidth: 1,
+    marginVertical: 2,
   },
   infoText: {
     fontFamily: "Poppins-Medium",

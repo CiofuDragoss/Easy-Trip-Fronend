@@ -7,15 +7,16 @@ import { QuestionsContext } from "@/context/QuestionsContext";
 import GoButton from "@/components/Gobutton";
 import AnimatedLogo from "@/components/animatedSmallLogo";
 import AntDesign from "@expo/vector-icons/AntDesign";
-
+import { useNavigation } from "expo-router";
 export default function DrinksQuestions() {
-  const { setDrinksQuestions } = useContext(QuestionsContext);
+  const { setSecondaryQuestions, setMainQuestions } =
+    useContext(QuestionsContext);
   const [error, setError] = useState(false);
+  const navigation = useNavigation();
   const DrinksQuestions = useRef({
     groupType: "",
-    drinkTypes: [],
+    drinkTypes: "",
     locationTypes: [],
-    locationFeatures: [],
   });
   const handleContinue = () => {
     const allAnsweared = Object.values(DrinksQuestions.current).every(
@@ -24,23 +25,22 @@ export default function DrinksQuestions() {
           return item.length > 0;
         }
 
+        if (item == 0 || item == 1) {
+          return true;
+        }
         return Boolean(item);
       }
     );
-    console.log(
-      "🔍 current answers:",
-      DrinksQuestions.current,
-      "allAnswered?",
-      allAnsweared
-    );
+
     if (!allAnsweared) {
       setError(true);
 
       return;
     }
     setError(false);
-
-    setDrinksQuestions(DrinksQuestions.current);
+    setMainQuestions((prev) => ({ ...prev, category: "Bauturi" }));
+    setSecondaryQuestions(DrinksQuestions.current);
+    navigation.replace("Results");
   };
   return (
     <View style={styles.main}>
@@ -49,30 +49,46 @@ export default function DrinksQuestions() {
 
       <Text style={styles.text}>Sunteti in grup?</Text>
       <BorderButtonList
-        labels={["solo", "cuplu", "grup"]}
+        labels={["da"]}
         WIDTH={"90%"}
-        oneOption={true}
-        callback={(labels) => (DrinksQuestions.current.groupType = labels[0])}
+        callback={(labels) =>
+          (DrinksQuestions.current.groupType = labels.length > 0 ? 1 : 0)
+        }
       />
 
-      <Text style={styles.text}>Ce doresti să savurezi?</Text>
+      <Text style={[styles.text, { marginTop: 15, margin: 0 }]}>
+        Ce doresti să savurezi?
+      </Text>
+
       <BorderButtonList
         labels={[
           "Cafea",
           "Bere",
           "Vin",
           "Cocktailuri",
-          "Ceai",
-          "Desert",
-          "Inghetata",
+          "Dulciuri",
           "Sucuri de fructe",
+          "Inghetata",
+          "Ceai",
           "Nu conteaza",
         ]}
         WIDTH={"90%"}
-        callback={(labels) => (DrinksQuestions.current.drinkTypes = labels)}
+        oneOption={true}
+        callback={(labels) => (DrinksQuestions.current.drinkTypes = labels[0])}
       />
 
-      <Text style={styles.text}>Preferi anumite tipuri de locatii?</Text>
+      <Text style={[styles.text, { margin: 0, marginTop: 15 }]}>
+        Preferi anumite tipuri de locatii?
+      </Text>
+      <Text
+        style={[
+          styles.text,
+          { margin: 0, fontSize: 12, color: "grey", paddingHorizontal: 10 },
+        ]}
+      >
+        Tip: Pentru rezultate cat mai bune, selecteaza tipul de locatii
+        relevante pentru ce doresti sa savurezi!
+      </Text>
       <BorderButtonList
         labels={[
           "Cafenea",
@@ -80,21 +96,12 @@ export default function DrinksQuestions() {
           "Ceainarie",
           "Pub",
           "Vinarie",
-          "Nu conteaza",
+          "Cofetarie & Dulciuri",
+          "Bar de sucuri fresh",
+          "Gelaterie",
         ]}
         WIDTH={"90%"}
         callback={(labels) => (DrinksQuestions.current.locationTypes = labels)}
-      />
-
-      <Text style={styles.text}>
-        Ce caracteristici ai dori sa aiba locatiile?
-      </Text>
-      <BorderButtonList
-        labels={["Optiuni Vegane", "Inedit", "Nu conteaza"]}
-        WIDTH={"90%"}
-        callback={(labels) =>
-          (DrinksQuestions.current.locationFeatures = labels)
-        }
       />
 
       <GoButton text={"continua"} onSwipe={handleContinue} />

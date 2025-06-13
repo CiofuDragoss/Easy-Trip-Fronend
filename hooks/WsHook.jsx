@@ -56,8 +56,8 @@ export function useRecommendWs({ MainQuestions, SecondaryQuestions }) {
             stop();
           }
           setUpdates(data);
-        } catch {
-          setError("Probleme de comunicare cu serverul! Incearca din nou");
+        } catch (e) {
+          setError(e.message);
         }
       };
 
