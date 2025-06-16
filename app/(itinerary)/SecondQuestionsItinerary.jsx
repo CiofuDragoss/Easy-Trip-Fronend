@@ -16,6 +16,7 @@ export default function SecondaryQuestionsItinerary() {
 
   const ItineraryQuestions = useRef({
     intensity: 0,
+    itineraryType: null,
   });
   const navigation = useNavigation();
   const handleContinue = () => {
@@ -63,6 +64,28 @@ export default function SecondaryQuestionsItinerary() {
       <Slider
         labels={["lejer", "cat mai multe obiective"]}
         callback={(value) => (ItineraryQuestions.current.intensity = value)}
+      />
+
+      <Text style={[styles.text, { margin: 0, marginTop: 45 }]}>
+        Ce tip de itinerariu doresti?
+      </Text>
+      <Text
+        style={[
+          styles.text,
+          { margin: 0, marginBottom: 10, fontSize: 14, color: "grey" },
+        ]}
+      >
+        Sfat: Selectati varianta cea mai potrivita in functie de cand doriti sa
+        va incepeti ziua.Spre exemplu, optiunea "Dimineata" inseamna ca
+        itinerariul va fi pentru intreaga zi!
+      </Text>
+      <BorderButtonList
+        labels={["Dimineata", "Pranz", "Dupamasa"]}
+        WIDTH={"90%"}
+        oneOption={true}
+        callback={(labels) => {
+          ItineraryQuestions.current.itineraryType = labels[0];
+        }}
       />
 
       <GoButton text={"continua"} onSwipe={handleContinue} />

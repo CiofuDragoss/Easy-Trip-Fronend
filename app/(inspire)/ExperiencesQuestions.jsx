@@ -14,7 +14,6 @@ export default function ExperiencesQuestions() {
   const navigation = useNavigation();
   const [error, setError] = useState(false);
   const ExperienceQuestions = useRef({
-    adrenaline: null,
     physical: 0,
     indoorOutdoor: null,
   });
@@ -47,15 +46,7 @@ export default function ExperiencesQuestions() {
           tinand cont de criterii.
         </Text>
       </View>
-      <Text style={styles.text}>Activitati pline de adrenalina?</Text>
-      <BorderButtonList
-        labels={["da", "nu", "ambele"]}
-        WIDTH={"60%"}
-        oneOption={true}
-        callback={(labels) => {
-          ExperienceQuestions.current.adrenaline = labels[0];
-        }}
-      />
+
       <Text style={styles.text}>
         Experiente solicitante fizic sau relaxante?
       </Text>

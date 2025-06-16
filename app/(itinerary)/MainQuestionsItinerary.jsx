@@ -9,6 +9,17 @@ import AnimatedLogo from "@/components/animatedSmallLogo";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useLocation } from "@/context/LocationContext";
 import { useNavigation } from "expo-router";
+import SwipeList from "@/components/flatListValue";
+const weekDaysGoogle = [
+  { key: "1", value: "Lu." },
+  { key: "2", value: "Ma." },
+  { key: "3", value: "Mie." },
+  { key: "4", value: "Joi" },
+  { key: "5", value: "Vi." },
+  { key: "6", value: "Sa." },
+  { key: "0", value: "Du." },
+];
+
 export default function MainQuestionsItinerary() {
   const { location } = useLocation();
   const { setMainQuestions, setSecondaryQuestions } =
@@ -16,7 +27,7 @@ export default function MainQuestionsItinerary() {
   const [error, setError] = useState(false);
   const budgetRef = useRef(0);
   const ItineraryQuestions = useRef({
-    itineraryType: null,
+    day: 4,
   });
   const navigation = useNavigation();
   const handleContinue = () => {
@@ -66,27 +77,15 @@ export default function MainQuestionsItinerary() {
       />
 
       <Text style={[styles.text, { margin: 0, marginTop: 45 }]}>
-        Ce tip de itinerariu doresti?
+        Pentru ce zi doriti itinerariul?
       </Text>
-      <Text
-        style={[
-          styles.text,
-          { margin: 0, marginBottom: 10, fontSize: 14, color: "grey" },
-        ]}
-      >
-        Sfat: Selectati varianta cea mai potrivita in functie de cand doriti sa
-        va incepeti ziua.Spre exemplu, optiunea "Dimineata" inseamna ca
-        itinerariul va fi pentru intreaga zi!
-      </Text>
-      <BorderButtonList
-        labels={["Dimineata", "Pranz", "Dupamasa"]}
-        WIDTH={"90%"}
-        oneOption={true}
-        callback={(labels) => {
-          ItineraryQuestions.current.itineraryType = labels[0];
+      <SwipeList
+        data={weekDaysGoogle}
+        onSelectItem={(index) => {
+          const googleDay = parseInt(weekDaysGoogle[index].key);
+          ItineraryQuestions.current.day = googleDay;
         }}
       />
-
       <GoButton text={"continua"} onSwipe={handleContinue} />
 
       {error ? (
